@@ -22,12 +22,12 @@ class TimerScheduler {
     val system = AkkaOps.getActorSystem()
     import system.dispatcher
 
-    system.scheduler.schedule(1000 milliseconds,20000 milliseconds){
+    system.scheduler.schedule(1000 milliseconds,1 minutes){
       logBack.info("定时检测client")
       clientCheckActor ! Check
     }
 
-    system.scheduler.schedule(1000 milliseconds,20000 milliseconds){
+    system.scheduler.schedule(1000 milliseconds,1 minutes){
       logBack.info("定时检测worker")
       workerCheckActor ! Check
     }

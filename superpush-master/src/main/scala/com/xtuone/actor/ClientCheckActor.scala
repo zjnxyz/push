@@ -11,12 +11,11 @@ import org.slf4j.LoggerFactory
  */
 class ClientCheckActor extends Actor with ActorLogging{
 
-  val logBack = Logging(context.system,classOf[ClientCheckActor])
+  val logBack = LoggerFactory.getLogger(classOf[ClientCheckActor])
 
   override def receive: Receive = {
 
     case Check =>{
-//      Const.clientMap.+= ("111" -> new Client("",1021,100L))
 
       val map = Const.clientMap
       map.foreach{

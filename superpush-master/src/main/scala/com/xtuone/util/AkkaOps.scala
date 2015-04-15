@@ -44,6 +44,8 @@ object AkkaOps {
 
     ConfigFactory.parseString(
       s"""
+      |akka.loggers = ["akka.event.slf4j.Slf4jLogger"]
+      |akka.loglevel = "DEBUG"
       |akka.stdout-loglevel = "INFO"
       |akka.version = "2.3.7"
       |akka.jvm-exit-on-fatal-error = off

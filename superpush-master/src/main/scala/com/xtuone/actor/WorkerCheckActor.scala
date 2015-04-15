@@ -4,6 +4,7 @@ import akka.actor.{ActorLogging, Actor}
 import akka.event.Logging
 import com.xtuone.model.Check
 import com.xtuone.util.{MethodHelper, AkkaOps, Const}
+import org.slf4j.LoggerFactory
 
 /**
  * Created by Zz on 2015/4/7.
@@ -11,7 +12,7 @@ import com.xtuone.util.{MethodHelper, AkkaOps, Const}
  */
 class WorkerCheckActor extends Actor with ActorLogging{
 
-  val logBack = Logging(context.system,classOf[ClientCheckActor])
+  val logBack = LoggerFactory.getLogger(classOf[WorkerCheckActor])
 
   override def receive: Receive = {
 

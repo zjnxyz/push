@@ -4,12 +4,16 @@ import akka.actor.{ActorRef, ActorLogging, Actor}
 import com.xtuone.message.{GetWorkers, Workers, Heartbeat, Register}
 import com.xtuone.model.{Worker, Client}
 import com.xtuone.util.{MethodHelper, AkkaOps, Const}
+import org.slf4j.LoggerFactory
 
 /**
  * Created by Zz on 2015/4/7.
  *
  */
 class MasterActor extends Actor with ActorLogging{
+
+  val logBack = LoggerFactory.getLogger(classOf[MasterActor])
+
   override def receive: Receive = {
 
     case register: Register =>{
