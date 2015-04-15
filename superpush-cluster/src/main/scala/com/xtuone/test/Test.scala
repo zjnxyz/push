@@ -14,7 +14,11 @@ import com.xtuone.util._
  * Created by Zz on 2015/1/12.
  */
 object Test extends App{
-  println(MD5.getMD5("1279657"+Constant.gopushKey))
+
+  val system  = AkkaOps.createActorSystem("")
+  val hello =  system.actorOf(Props[PushDispatcher],name = "PushDispatcher" )
+
+//  println(MD5.getMD5("1279657"+Constant.gopushKey))
 
 //  SmsUtil.sendTimeoutMsg()
 

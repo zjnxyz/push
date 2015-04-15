@@ -162,5 +162,19 @@ case class SuperPushMessageDetail(id: Int, chatId: String, content: String, titl
                                   imgUrl: String,featureName: String, imageTextUrl: String,icon: String,
                                    callBackUrl: String, callType: Int, messageId:Int)
 
+/**
+ * Created by Zz on 2015/4/7.
+ * 注册信息
+ */
+case class Register(ip: String, port: Int, connectType: Int)
+
+/**
+ * 心跳信息
+ * @param ip
+ * @param port
+ * @param connectType
+ */
+case class Heartbeat(ip: String, port: Int, connectType: Int)
+
 
 

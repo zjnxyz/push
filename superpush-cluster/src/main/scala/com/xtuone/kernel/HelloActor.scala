@@ -6,6 +6,7 @@ import akka.kernel.Bootable
 import com.typesafe.config.ConfigFactory
 import com.xtuone.dispatcher.PushDispatcher
 import com.xtuone.message.{Paper, ChatMsg}
+import com.xtuone.util.AkkaOps
 
 /**
  * Created by Zz on 2015/1/4.
@@ -34,8 +35,8 @@ class WorldActor extends Actor {
 class HelloKernel extends Bootable {
 //  val system = ActorSystem("hellokernel")
 
-  val system = ActorSystem("RemoteNodeApp", ConfigFactory.load().getConfig("RemoteSys"))
-
+//  val system = ActorSystem("RemoteNodeApp", ConfigFactory.load().getConfig("RemoteSys"))
+  val system  = AkkaOps.createActorSystem("")
 
   def startup = {
     println("startup, xxoo")
