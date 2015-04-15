@@ -17,8 +17,7 @@ class HeartbeatScheduler {
 
   def scheduler( worker: ActorRef):Unit={
     val system = AkkaOps.getActorSystem()
-    system.scheduler.schedule(1000 milliseconds,20000 milliseconds){
-      println("定时任务")
+    system.scheduler.schedule(1000 milliseconds, 1 minutes){
       worker ! new Heartbeat(Const.HOST,Const.PORT,Const.CONNECT_TYPE_WORKER)
     }
   }

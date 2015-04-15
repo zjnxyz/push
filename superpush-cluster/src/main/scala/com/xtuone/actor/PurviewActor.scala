@@ -7,6 +7,7 @@ import com.google.gson.Gson
 import com.xtuone.bo.BaseMessageBO
 import com.xtuone.message.PurviewMsg
 import com.xtuone.util.{MethodHelper, GopushUtil, MessageType}
+import org.slf4j.LoggerFactory
 
 /**
  * Created by Zz on 2015/1/28.
@@ -14,7 +15,7 @@ import com.xtuone.util.{MethodHelper, GopushUtil, MessageType}
 class PurviewActor  extends Actor with ActorLogging{
 
   val g = new Gson()
-  val logBack = Logging(context.system,classOf[PurviewActor])
+  val logBack = LoggerFactory.getLogger(classOf[PurviewActor])
 
   override def receive: Receive = {
 
@@ -43,7 +44,7 @@ class PurviewActor  extends Actor with ActorLogging{
  */
 class PurviewRouter extends Actor with ActorLogging{
 
-  val logBack = Logging(context.system,classOf[PurviewRouter])
+  val logBack = LoggerFactory.getLogger(classOf[PurviewRouter])
 
   var router = {
     val routees = Vector.fill(5) {

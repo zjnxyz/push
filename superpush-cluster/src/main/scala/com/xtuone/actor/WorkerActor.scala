@@ -7,6 +7,7 @@ import akka.event.Logging
 import akka.util.Timeout
 import com.xtuone.message.{Heartbeat, Register}
 import com.xtuone.util.{MethodHelper, Const}
+import org.slf4j.LoggerFactory
 import collection.JavaConversions._
 import scala.concurrent.ExecutionContext
 
@@ -16,7 +17,8 @@ import scala.util.{Failure, Success}
  * Created by Zz on 2015/4/14.
  */
 class WorkerActor extends Actor with ActorLogging{
-  val logBack = Logging(context.system,classOf[WorkerActor])
+
+  val logBack = LoggerFactory.getLogger(classOf[WorkerActor])
 
   var master: ActorSelection = null
 

@@ -12,13 +12,14 @@ import com.xtuone.util.jdbc.JdbcUtil
 import com.xtuone.util.model.AnpsMessage
 import com.xtuone.util.redis.RedisUtil213
 import com.xtuone.util._
+import org.slf4j.LoggerFactory
 
 /**
  * Created by Zz on 2015/1/13.
  */
 class PaperActor extends Actor with ActorLogging{
 
-  val logBack = Logging(context.system,classOf[PaperActor])
+  val logBack = LoggerFactory.getLogger(classOf[PaperActor])
 
   var apnsPaperActor:ActorRef =_
 
@@ -35,7 +36,7 @@ class PaperActor extends Actor with ActorLogging{
 
   override def receive: Receive = {
     case chatMsg:ChatMsg =>{
-      logBack.debug("发送小纸条~~~")
+
       val g = new Gson()
       val pushMessage = new BaseMessageBO
       pushMessage.setPd(g.toJson(chatMsg.pager))
@@ -43,18 +44,6 @@ class PaperActor extends Actor with ActorLogging{
       val result = GopushUtil.pushMessage( g.toJson(pushMessage) ,MethodHelper.getPushKey(chatMsg.chatIdStr))
       MethodHelper.monitorStatus(result)
       logBack.info("gopush-->result:"+result+": chatId :"+chatMsg.chatIdStr+" :message: "+ g.toJson(pushMessage) )
-//      if(!result ){
-//        //发送短信通知
-//        failureFlag = true
-//      }else{
-//        failureFlag = false
-//        count = 0
-//      }
-//      if(failureFlag && count == 0){
-//        count = count+1
-//        //发送短信通知
-//        SmsUtil.sendMsg(Constant.mobileNumbers,Constant.content,Constant.num)
-//      }
 
       //推apns(学生用户)
       if(chatMsg.contactsTypeInt == Constant.contactsTypeInt_student){
@@ -73,7 +62,7 @@ class PaperActor extends Actor with ActorLogging{
  */
 class ApnsPaperActor extends Actor with ActorLogging{
 
-  val logBack = Logging(context.system,classOf[ApnsPaperActor])
+  val logBack = LoggerFactory.getLogger(classOf[ApnsPaperActor])
 
   override def receive: Actor.Receive = {
     case chatMsg:ChatMsg =>{

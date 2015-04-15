@@ -12,6 +12,7 @@ import com.xtuone.message.{OtherMsg, PublicMessageMsg}
 import com.xtuone.util.model.AnpsMessage
 import com.xtuone.util.redis.RedisUtil213
 import com.xtuone.util._
+import org.slf4j.LoggerFactory
 import collection.JavaConversions._
 
 /**
@@ -19,7 +20,7 @@ import collection.JavaConversions._
  */
 class OtherActor  extends Actor with ActorLogging{
 
-  val logBack = Logging(context.system,classOf[TreeholeNewsActor])
+  val logBack = LoggerFactory.getLogger(classOf[OtherActor])
   val g = new Gson()
   //失败标识
   var failureFlag = false
@@ -54,18 +55,6 @@ class OtherActor  extends Actor with ActorLogging{
         val result = GopushUtil.pushMoreMessage(g.toJson(pushMessage),studentIds.substring(0,studentIds.length-1))
         MethodHelper.monitorStatus(result)
         logBack.info("gopush-->result:"+result+": chatId :"+studentIds+" message:"+ g.toJson(pushMessage))
-//        if(!result ){
-//          //发送短信通知
-//          failureFlag = true
-//        }else{
-//          failureFlag = false
-//          count = 0
-//        }
-//        if(failureFlag && count == 0){
-//          count = count+1
-//          //发送短信通知
-//          SmsUtil.sendMsg(Constant.mobileNumbers,Constant.content,Constant.num)
-//        }
       }
     }
     case Terminated(a) =>{
@@ -81,7 +70,7 @@ class OtherActor  extends Actor with ActorLogging{
  */
 class ApnsOtherActor extends Actor with ActorLogging{
 
-  val logBack = Logging(context.system,classOf[ApnsOtherActor])
+  val logBack = LoggerFactory.getLogger(classOf[ApnsOtherActor])
   var jpushOtherActor: ActorRef =_
 
 
@@ -135,7 +124,7 @@ class ApnsOtherActor extends Actor with ActorLogging{
 
 class JpushOtherActor extends Actor with ActorLogging{
 
-  val logBack = Logging(context.system,classOf[PaperActor])
+  val logBack = LoggerFactory.getLogger(classOf[JpushOtherActor])
 
   val g = new Gson()
 
@@ -170,6 +159,7 @@ class JpushOtherActor extends Actor with ActorLogging{
 }
 
 class OtherRouter extends Actor with ActorLogging{
+  val logBack = LoggerFactory.getLogger(classOf[OtherRouter])
   var router = {
     val routees = Vector.fill(5) {
       val r = context.actorOf(Props[OtherActor])
@@ -181,7 +171,7 @@ class OtherRouter extends Actor with ActorLogging{
 
   override def receive: Actor.Receive = {
     case  otherMsg:OtherMsg =>{
-      log.info("其他消息推送")
+      logBack.info("其他消息推送")
       router.route(otherMsg,sender())
     }
     case Terminated(a) =>{

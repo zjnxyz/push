@@ -11,6 +11,7 @@ import com.xtuone.message.{TreeholeMessageNews, TreeholeMessageMsg}
 import com.xtuone.util.model.AnpsMessage
 import com.xtuone.util._
 import com.xtuone.util.redis.RedisUtil213
+import org.slf4j.LoggerFactory
 import collection.JavaConversions._
 
 /**
@@ -18,7 +19,7 @@ import collection.JavaConversions._
  */
 class TreeholeMessageActor extends Actor with ActorLogging{
 
-  val logBack = Logging(context.system,classOf[ApnsPublicMessageActor])
+  val logBack = LoggerFactory.getLogger(classOf[TreeholeMessageActor])
 
   var apnsTreeholeMessageActor: ActorRef =_
 
@@ -51,18 +52,6 @@ class TreeholeMessageActor extends Actor with ActorLogging{
         val result = GopushUtil.pushMoreMessage(g.toJson(pushMessage),studentIds.substring(0,studentIds.length-1))
         MethodHelper.monitorStatus(result)
         logBack.info("gopush-->result:"+result+": chatId :"+ studentIds +" :message: "+ g.toJson(pushMessage) )
-//        if(!result ){
-//          //发送短信通知
-//          failureFlag = true
-//        }else{
-//          failureFlag = false
-//          count = 0
-//        }
-//        if(failureFlag && count == 0){
-//          count = count+1
-//          //发送短信通知
-//          SmsUtil.sendMsg(Constant.mobileNumbers,Constant.content,Constant.num)
-//        }
       }
       //推送apns
       apnsTreeholeMessageActor ! treeholeMessageMsg
@@ -81,7 +70,7 @@ class TreeholeMessageActor extends Actor with ActorLogging{
  */
 class ApnsTreeholeMessageActor extends Actor with ActorLogging{
 
-  val logBack = Logging(context.system,classOf[ApnsPublicMessageActor])
+  val logBack = LoggerFactory.getLogger(classOf[ApnsTreeholeMessageActor])
   val g = new Gson()
   var jpushTreeholeMessageActor: ActorRef =_
 
@@ -137,7 +126,7 @@ class ApnsTreeholeMessageActor extends Actor with ActorLogging{
  */
 class JpushTreeholeMessageActor extends Actor with ActorLogging{
 
-  val logBack = Logging(context.system,classOf[ApnsPublicMessageActor])
+  val logBack = LoggerFactory.getLogger(classOf[JpushTreeholeMessageActor])
 
   override def receive: Actor.Receive = {
     case treeholeMessageMsg:TreeholeMessageMsg =>{

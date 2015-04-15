@@ -10,6 +10,7 @@ import com.xtuone.message.{UnReadNews, TreeholeNewsMsg}
 import com.xtuone.util.model.AnpsMessage
 import com.xtuone.util._
 import com.xtuone.util.redis.RedisUtil213
+import org.slf4j.LoggerFactory
 
 /**
  * Created by Zz on 2015/1/14.
@@ -21,7 +22,7 @@ class TreeholeNewsActor extends Actor with ActorLogging{
 
   var wpPushActor:ActorRef =_
 
-  val logBack = Logging(context.system,classOf[TreeholeNewsActor])
+  val logBack = LoggerFactory.getLogger(classOf[TreeholeNewsActor])
   val g = new Gson()
   //失败标识
   var failureFlag = false
@@ -45,19 +46,6 @@ class TreeholeNewsActor extends Actor with ActorLogging{
       val result = GopushUtil.pushMessage(g.toJson(pushMessage),MethodHelper.getPushKey(treeholeNewsMsg.studentId))
       MethodHelper.monitorStatus(result)
       logBack.info("gopush-->result:"+result+": chatId :"+ treeholeNewsMsg.studentId +" :message: "+ g.toJson(pushMessage) )
-//      if(!result ){
-//        //发送短信通知
-//        failureFlag = true
-//      }else{
-//        failureFlag = false
-//        count = 0
-//      }
-//      if(failureFlag && count == 0){
-//        count = count+1
-//        //发送短信通知
-//        SmsUtil.sendMsg(Constant.mobileNumbers,Constant.content,Constant.num)
-//      }
-
       //推送到apns
       apnsActor ! treeholeNewsMsg
 
@@ -81,7 +69,7 @@ class ApnsTreeholeNewsActor extends Actor with ActorLogging{
 
   var jpushActor:ActorRef =_
 
-  val logBack = Logging(context.system,classOf[ApnsTreeholeNewsActor])
+  val logBack = LoggerFactory.getLogger(classOf[ApnsTreeholeNewsActor])
 
   val g = new Gson()
 
@@ -128,7 +116,7 @@ class ApnsTreeholeNewsActor extends Actor with ActorLogging{
  */
 class JpushTreeholeNewsActor extends Actor with ActorLogging{
 
-  val logBack = Logging(context.system,classOf[ApnsTreeholeNewsActor])
+  val logBack = LoggerFactory.getLogger(classOf[JpushTreeholeNewsActor])
 
   val g = new Gson()
 
@@ -154,7 +142,7 @@ class JpushTreeholeNewsActor extends Actor with ActorLogging{
 
 class WpPushTreeholeNewsActor extends Actor with ActorLogging{
 
-  val logBack = Logging(context.system,classOf[ApnsTreeholeNewsActor])
+  val logBack = LoggerFactory.getLogger(classOf[WpPushTreeholeNewsActor])
   override def receive: Actor.Receive = {
     case treeholeNewsMsg:TreeholeNewsMsg =>{
 

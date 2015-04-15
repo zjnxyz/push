@@ -3,11 +3,13 @@ package com.xtuone.actor
 import akka.actor.{Terminated, Props, ActorLogging, Actor}
 import akka.routing.{ActorRefRoutee, Router, RoundRobinRoutingLogic}
 import com.xtuone.message.ChatMsg
+import org.slf4j.LoggerFactory
 
 /**
  * Created by Zz on 2015/1/13.
  */
 class PaperRouter extends Actor with ActorLogging{
+  val logBack = LoggerFactory.getLogger(classOf[PaperRouter])
 
   var router = {
     val routees = Vector.fill(5) {
@@ -21,7 +23,6 @@ class PaperRouter extends Actor with ActorLogging{
   override def receive: Receive = {
 
     case chatMsg:ChatMsg =>{
-      log.info("路由chatMsg")
       router.route(chatMsg,sender())
     }
 

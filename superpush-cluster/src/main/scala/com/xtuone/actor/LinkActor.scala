@@ -12,6 +12,7 @@ import com.xtuone.model.LinkMessageBo
 import com.xtuone.util.model.AnpsMessage
 import com.xtuone.util.redis.RedisUtil213
 import com.xtuone.util._
+import org.slf4j.LoggerFactory
 import collection.JavaConversions._
 
 /**
@@ -20,7 +21,7 @@ import collection.JavaConversions._
 class LinkActor extends Actor with ActorLogging{
 
   val g = new Gson()
-  val logBack = Logging(context.system,classOf[LinkActor])
+  val logBack = LoggerFactory.getLogger(classOf[LinkActor])
 
   var apnsLinkActor: ActorRef =_
   //失败标识
@@ -51,19 +52,6 @@ class LinkActor extends Actor with ActorLogging{
         val result = GopushUtil.pushMoreMessage(g.toJson(pushMessage),studentIds.substring(0,studentIds.length-1))
         MethodHelper.monitorStatus(result)
         logBack.info("gopush-->result:"+result+": chatId :"+ studentIds +" :message: "+ g.toJson(pushMessage) )
-
-//        if(!result ){
-//          //发送短信通知
-//          failureFlag = true
-//        }else{
-//          failureFlag = false
-//          count = 0
-//        }
-//        if(failureFlag && count == 0){
-//          count = count+1
-//          //发送短信通知
-//          SmsUtil.sendMsg(Constant.mobileNumbers,Constant.content,Constant.num)
-//        }
       }
       //推送apns
       apnsLinkActor ! linkMessageMsg
@@ -77,7 +65,8 @@ class LinkActor extends Actor with ActorLogging{
 
 class ApnsLinkActor extends Actor with ActorLogging{
   val g = new Gson()
-  val logBack = Logging(context.system,classOf[LinkActor])
+  val logBack = LoggerFactory.getLogger(classOf[ApnsLinkActor])
+
   override def receive: Actor.Receive = {
     case linkMessageMsg:LinkMessageMsg =>{
       for( studentId <- linkMessageMsg.studentIds){
@@ -111,7 +100,7 @@ class ApnsLinkActor extends Actor with ActorLogging{
 
 class LinkRounter extends Actor with ActorLogging{
 
-  val logBack = Logging(context.system,classOf[LinkRounter])
+  val logBack = LoggerFactory.getLogger(classOf[LinkRounter])
 
   var router = {
     val routees = Vector.fill(5) {

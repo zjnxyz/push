@@ -5,12 +5,16 @@ import akka.actor.{Terminated, Props, Actor, ActorLogging}
 import akka.routing.{RoundRobinRoutingLogic, Router, ActorRefRoutee}
 import com.xtuone.message.FeedbackMessage
 import com.xtuone.util.HttpClientUtils
-import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.NameValuePair
+import org.slf4j.LoggerFactory
+;
 
 /**
  * Created by Zz on 2015/1/16.
  */
 class FeedbackActor extends Actor with ActorLogging{
+
+  val logBack = LoggerFactory.getLogger(classOf[FeedbackActor])
 
   override def receive: Receive = {
     case feedbackMessage:FeedbackMessage =>{
@@ -24,7 +28,7 @@ class FeedbackActor extends Actor with ActorLogging{
           params(1) = studentParam
          val result =  HttpClientUtils.init().doPost(params, feedbackMessage.callBackUrl)
           if(result == null ||"".equals(result)){
-            log.info("反馈失败，请检查原因---"+idStr)
+            logBack.info("反馈失败，请检查原因---"+idStr)
           }
         }
       }
@@ -47,7 +51,6 @@ class FeedbackRouter extends Actor with ActorLogging{
   override def receive: Actor.Receive = {
 
     case feedbackMessage:FeedbackMessage =>{
-      log.info("反馈收到的消息")
       router.route(feedbackMessage,sender())
     }
     case Terminated(a) =>{

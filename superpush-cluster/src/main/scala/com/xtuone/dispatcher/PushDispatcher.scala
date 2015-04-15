@@ -6,6 +6,7 @@ import akka.actor.{Props, ActorRef, ActorLogging, Actor}
 import akka.event.Logging
 import com.xtuone.actor._
 import com.xtuone.message._
+import org.slf4j.LoggerFactory
 import collection.JavaConversions._
 
 /**
@@ -13,7 +14,7 @@ import collection.JavaConversions._
  */
 class PushDispatcher extends Actor with ActorLogging{
 
-  val logBack = Logging(context.system,classOf[PushDispatcher])
+  val logBack = LoggerFactory.getLogger(classOf[PushDispatcher])
 
   var paperRouter:ActorRef =_
 
@@ -47,17 +48,14 @@ class PushDispatcher extends Actor with ActorLogging{
   override def receive: Receive = {
     case chatMsg:ChatMsg =>{//推送聊天消息
 //      logBack.debug("聊天信息")
-//      logBack.info("ChatMsg:"+chatMsg.chatIdStr+":"+chatMsg.pager.contentStr)
       paperRouter ! chatMsg
     }
     case treeholeNewsMsg:TreeholeNewsMsg =>{//推送下课聊消息
 //      logBack.debug("推送下课聊消息")
-      logBack.info("TreeholeNewsMsg:"+treeholeNewsMsg.studentId+":"+treeholeNewsMsg.unReadNews.c)
       treeholeNewsRouter ! treeholeNewsMsg
     }
     case treeholeMessageMsg:TreeholeMessageMsg =>{//推送下课聊主题
 //      logBack.debug("推送下课聊主题")
-      logBack.info("TreeholeMessageMsg:"+treeholeMessageMsg.studentIds+":"+treeholeMessageMsg.treeholeMessageNews.t)
       treeholeMessageRouter ! treeholeMessageMsg
     }
 

@@ -15,6 +15,7 @@ import com.xtuone.util.model.AnpsMessage
 import com.xtuone.util._
 import com.xtuone.util.jdbc.JdbcUtil
 import com.xtuone.util.redis.RedisUtil213
+import org.slf4j.LoggerFactory
 import collection.JavaConversions._
 
 /**
@@ -26,7 +27,7 @@ class PublicMessageActor extends Actor with ActorLogging{
 
   var syncRevMessageActor: ActorRef =_
 
-  val logBack = Logging(context.system,classOf[PublicMessageActor])
+  val logBack = LoggerFactory.getLogger(classOf[PublicMessageActor])
   //失败标识
   var failureFlag = false
   var count = 0
@@ -67,18 +68,6 @@ class PublicMessageActor extends Actor with ActorLogging{
         //测试时，暂时改为一直失败
         MethodHelper.monitorStatus(result)
         logBack.info("gopush-->result:"+result+": chatId :"+studentIds)
-//        if(!result ){
-//          //发送短信通知
-//          failureFlag = true
-//        }else{
-//          failureFlag = false
-//          count = 0
-//        }
-//        if(failureFlag && count == 0){
-//          count = count+1
-//          //发送短信通知
-//          SmsUtil.sendMsg(Constant.mobileNumbers,Constant.content,Constant.num)
-//        }
       }
 
       //推送apns
@@ -273,7 +262,7 @@ class PublicMessageActor extends Actor with ActorLogging{
  */
 class JpushPublicMessageActor extends Actor with ActorLogging{
 
-  val logBack = Logging(context.system,classOf[PaperActor])
+  val logBack = LoggerFactory.getLogger(classOf[JpushPublicMessageActor])
 
   val g = new Gson()
 
@@ -308,7 +297,8 @@ class JpushPublicMessageActor extends Actor with ActorLogging{
 
 class ApnsPublicMessageActor extends Actor with ActorLogging{
 
-  val logBack = Logging(context.system,classOf[ApnsPublicMessageActor])
+  val logBack = LoggerFactory.getLogger(classOf[ApnsPublicMessageActor])
+
   var jpushPublicMessageActor: ActorRef =_
 
   val g = new Gson()
@@ -377,7 +367,6 @@ class PublicMessageRouter extends Actor with ActorLogging{
 
   override def receive: Actor.Receive = {
     case  publicMessageMsg:PublicMessageMsg =>{
-      log.info("推送公众消息")
       router.route(publicMessageMsg,sender())
     }
     case Terminated(a) =>{
