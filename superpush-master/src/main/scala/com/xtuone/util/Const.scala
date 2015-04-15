@@ -14,7 +14,7 @@ object Const {
   var workerMap:  Map[String,Worker] = Map()
 
   //过期时间
-  val timeout = 10*1000
+  val timeout = 30*1000
 
   /**
    * 当前的ip

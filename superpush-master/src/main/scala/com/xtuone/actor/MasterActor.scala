@@ -3,7 +3,7 @@ package com.xtuone.actor
 import akka.actor.{ActorRef, ActorLogging, Actor}
 import com.xtuone.message.{GetWorkers, Workers, Heartbeat, Register}
 import com.xtuone.model.{Worker, Client}
-import com.xtuone.util.{AkkaOps, Const}
+import com.xtuone.util.{MethodHelper, AkkaOps, Const}
 
 /**
  * Created by Zz on 2015/4/7.
@@ -27,6 +27,7 @@ class MasterActor extends Actor with ActorLogging{
         Const.workerMap .+= (register.ip +":"+ register.port ->
           new Worker(register.ip, register.port, System.currentTimeMillis()))
 
+        noticeAllClient()
       }else{
         // TODO 不存在的类型
       }
@@ -61,23 +62,21 @@ class MasterActor extends Actor with ActorLogging{
   }
 
   private def sendWorkerToClient( actor:ActorRef): Unit ={
-    val workerList = new StringBuilder
-    //返回workers列表
-    Const.workerMap.foreach{
-      case (key,value) => workerList.append(key).append(";")
-    }
-    actor ! new Workers(Const.HOST+":"+Const.PORT, workerList.toString())
+    actor ! MethodHelper.getActiveWorkers()
   }
 
+  /**
+   * 通知所有的client
+   */
   private def noticeAllClient(): Unit ={
     Const.clientMap.foreach{
       case (key,value) =>{
         val clinetUrl = AkkaOps.toAkkaUrl(value.ip,value.port,Const.CLIENT_AKKA_SYSTEM_NAME,Const.CLIENT_ACTOR_NAME)
-
+        val client = context.actorSelection(clinetUrl.toString)
+        client ! MethodHelper.getActiveWorkers()
       }
-
     }
-
   }
+
 
 }

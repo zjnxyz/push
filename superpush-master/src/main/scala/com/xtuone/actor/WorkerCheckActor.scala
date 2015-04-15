@@ -3,7 +3,7 @@ package com.xtuone.actor
 import akka.actor.{ActorLogging, Actor}
 import akka.event.Logging
 import com.xtuone.model.Check
-import com.xtuone.util.Const
+import com.xtuone.util.{MethodHelper, AkkaOps, Const}
 
 /**
  * Created by Zz on 2015/4/7.
@@ -26,8 +26,26 @@ class WorkerCheckActor extends Actor with ActorLogging{
         }
       }
       logBack.info("workerMap:"+ Const.workerMap)
-
+      if(Const.workerMap.size < map.size){
+        //通知client
+        noticeAllClient()
+      }
     }
 
   }
+
+  /**
+   * 通知所有的client
+   */
+  private def noticeAllClient(): Unit ={
+    Const.clientMap.foreach{
+      case (key,value) =>{
+        val clinetUrl = AkkaOps.toAkkaUrl(value.ip,value.port,Const.CLIENT_AKKA_SYSTEM_NAME,Const.CLIENT_ACTOR_NAME)
+        logBack.info("通知clinet："+clinetUrl)
+        val client = context.actorSelection(clinetUrl.toString)
+        client ! MethodHelper.getActiveWorkers()
+      }
+    }
+  }
+
 }
