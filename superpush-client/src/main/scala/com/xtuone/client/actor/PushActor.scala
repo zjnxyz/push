@@ -17,8 +17,6 @@ import scala.util.{Failure, Success}
  */
 class PushActor  extends Actor with ActorLogging{
 
-  val logBack = Logging(context.system,classOf[ClientActor])
-
   implicit val askTimeout = Timeout(60,TimeUnit.SECONDS)
 
   implicit val ec = ExecutionContext.Implicits.global
@@ -100,7 +98,6 @@ class PushActor  extends Actor with ActorLogging{
     }else{
 
       if(count > 10){
-        logBack.info("没有可用的worker")
         throw new Exception("没有可用的worker")
       }
 
@@ -111,6 +108,7 @@ class PushActor  extends Actor with ActorLogging{
 
       if(worker == null){
         val workerUrls = Const.workerUrls.take(i+1)
+        println("workerUrls:"+workerUrls)
         worker =  AkkaOps.getActorSystem().actorSelection(workerUrls.last)
       }
 

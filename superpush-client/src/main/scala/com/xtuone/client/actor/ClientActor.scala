@@ -17,8 +17,6 @@ import collection.JavaConversions._
  */
 class ClientActor extends Actor with ActorLogging{
 
-  val logBack = Logging(context.system,classOf[ClientActor])
-
   implicit val askTimeout = Timeout(60,TimeUnit.SECONDS)
 
   implicit val ec = ExecutionContext.Implicits.global
@@ -44,8 +42,6 @@ class ClientActor extends Actor with ActorLogging{
 
     case workers:Workers =>{
 
-      logBack.info("接收Workers通知~~")
-
       //当前可用的worker列表
       val workerList = workers.workerList
       if(MethodHelper.isNotEmpty(workerList)){
@@ -61,7 +57,6 @@ class ClientActor extends Actor with ActorLogging{
             (AkkaOps.toAkkaUrl(host,port,Const.WORK_AKKA_SYSTEM_NAME,Const.WORK_ACTOR_NAME)) :: Const.workerUrls
           }
         }
-        logBack.info("可用workers列表："+ Const.workerUrls)
 
       }
     }
@@ -88,7 +83,6 @@ class ClientActor extends Actor with ActorLogging{
   private [xtuone] def trySendMessageToMaster(counter:Int, num: Int,  msg:AnyRef):Unit={
 
     if(counter >  Const.masterUrls.size() ){
-      logBack.info("找不到可用的master")
       throw new Exception("找不到可用的master")
     }
 
@@ -130,7 +124,6 @@ class ClientActor extends Actor with ActorLogging{
    */
   def tryRegisterAllMasters(register: Register): Unit ={
     for(masterUrl <- Const.masterUrls){
-      logBack.info("注册到Master:"+masterUrl)
       val master = context.actorSelection(masterUrl.toString)
       val masterFuture = master resolveOne
 
