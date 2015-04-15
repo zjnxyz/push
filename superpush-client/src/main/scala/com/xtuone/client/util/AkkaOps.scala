@@ -5,6 +5,7 @@ import java.net.{InetAddress, ServerSocket, InetSocketAddress, Socket}
 import akka.actor.ActorSystem
 import com.typesafe.config.{Config, ConfigFactory}
 import com.xtuone.client.scheduler.HeartbeatScheduler
+import com.xtuone.message.Register
 
 import scala.beans.BeanProperty
 
@@ -48,6 +49,9 @@ object AkkaOps {
         port = port +1
       }
     }
+
+    //向Master注册Clinet
+    AkkaUtil.clientActor ! new Register(Const.HOST,Const.PORT,Const.CONNECT_TYPE_CLIENT)
 
     //启动心跳检测
     val heartbeat = new HeartbeatScheduler

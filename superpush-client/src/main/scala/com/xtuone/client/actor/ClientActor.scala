@@ -31,40 +31,9 @@ class ClientActor extends Actor with ActorLogging{
   var activeMasterUrl:String =_
 
   override def receive: Receive = {
-    case chatMsg: ChatMsg =>{
-
-    }
-
-    case treeholeNewsMsg: TreeholeNewsMsg =>{
-      sendMessageToWorker(treeholeNewsMsg)
-    }
-
-    case treeholeMessageMsg: TreeholeMessageMsg =>{
-      sendMessageToWorker(treeholeMessageMsg)
-    }
-
-    case accountMessage: AccountMessage =>{
-      //公众账号
-      sendMessageToWorker(accountMessage)
-    }
-
-    case feedbackMessage:FeedbackMessage =>{
-      //反馈
-      sendMessageToWorker(feedbackMessage)
-    }
-
-    case purviewMsg: PurviewMsg =>{
-      //权限
-      sendMessageToWorker(purviewMsg)
-    }
-
-    case otherMsg: OtherMsg =>{
-      //其他
-      sendMessageToWorker(otherMsg)
-    }
-
     case register:Register =>{
       //注册
+      tryRegisterAllMasters(register)
     }
 
     case heartbeat:Heartbeat =>{
@@ -74,6 +43,9 @@ class ClientActor extends Actor with ActorLogging{
     }
 
     case workers:Workers =>{
+
+      logBack.info("接收Workers通知~~")
+
       //当前可用的worker列表
       val workerList = workers.workerList
       if(MethodHelper.isNotEmpty(workerList)){
@@ -89,6 +61,8 @@ class ClientActor extends Actor with ActorLogging{
             (AkkaOps.toAkkaUrl(host,port,Const.WORK_AKKA_SYSTEM_NAME,Const.WORK_ACTOR_NAME)) :: Const.workerUrls
           }
         }
+        logBack.info("可用workers列表："+ Const.workerUrls)
+
       }
     }
 
@@ -98,58 +72,7 @@ class ClientActor extends Actor with ActorLogging{
   @throws(classOf[Exception])
   override def preStart(): Unit = {
     super.preStart()
-    //注册到master
-    tryRegisterAllMasters()
   }
-
-  /**
-   * 发送信息到置顶worker
-   * @param msg
-   */
-  def sendMessageToWorker(msg:AnyRef):Unit={
-    val num = System.currentTimeMillis() %  Const.workerUrls.size
-    trySendMessageToWorker(0,num.toInt,msg)
-  }
-
-  private [xtuone] def trySendMessageToWorker(counter:Int, num: Int,  msg:AnyRef):Unit={
-    val workerSize = Const.workerUrls.size
-    val count = counter+1
-
-    if( workerSize == 0 && count < 10){
-      //再次去获取可用的Workers
-      context.self ! GetWorkers
-
-    }else{
-
-      if(count > 10){
-        logBack.info("没有可用的worker")
-        throw new Exception("没有可用的worker")
-      }
-
-      var i = num
-      if(i >= workerSize){
-        i = 0
-      }
-
-      if(worker == null){
-        val workerUrls = Const.workerUrls.take(i)
-        worker =  AkkaOps.getActorSystem().actorSelection(workerUrls.last)
-      }
-
-      val localFuture = worker resolveOne()
-      localFuture.onComplete{
-        case Success(actor) => {
-          actor ! msg
-          println("~~~"+i)
-        }
-        case Failure(ex) =>{
-          trySendMessageToWorker(count, i+1, msg)
-        }
-      }
-    }
-
-  }
-
 
   /**
    * 向master发送消息
@@ -182,7 +105,6 @@ class ClientActor extends Actor with ActorLogging{
       }
 
     if(!MethodHelper.isNotEmpty(activeMasterUrl)){
-        println("---")
         activeMasterUrl = Const.masterUrls.get(numTemp)
       }
 
@@ -201,14 +123,12 @@ class ClientActor extends Actor with ActorLogging{
           trySendMessageToMaster(count,numTemp+1,msg)
         }
       }
-
-
   }
 
   /**
    * 注册到master
    */
-  def tryRegisterAllMasters(): Unit ={
+  def tryRegisterAllMasters(register: Register): Unit ={
     for(masterUrl <- Const.masterUrls){
       logBack.info("注册到Master:"+masterUrl)
       val master = context.actorSelection(masterUrl.toString)
@@ -216,7 +136,7 @@ class ClientActor extends Actor with ActorLogging{
 
        masterFuture.onComplete{
           case Success(actor) => {
-            actor ! new Register(Const.HOST,Const.PORT,Const.CONNECT_TYPE_CLIENT)
+            actor ! register
             activeMasterUrl = masterUrl
           }
           case Failure(ex) =>{
