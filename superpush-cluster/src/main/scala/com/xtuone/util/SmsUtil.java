@@ -20,11 +20,11 @@ import scala.math.Ordering;
 public class SmsUtil {
 	//==========测试账号===========
 	// 梦网帐号
-	private static final String MW_ACCOUNT = "j01585";
+	private static final String MW_ACCOUNT = "***";
 	// 密码
-	private static final String MW_PASSWORD = "663521";
+	private static final String MW_PASSWORD = "***";
 	// 主机
-	private static final String MW_HOST = "http://61.145.229.29:9003";
+	private static final String MW_HOST = "***";
 	// 接口 -- 发送信息
 	private static final String MW_API_SEND_MESSAGE = "/MWGate/wmgw.asmx/MongateCsSpSendSmsNew";
 	// 接口 -- 查询余额
