@@ -10,3 +10,6 @@
 * 5、支持client消息发送失败重传机制，（消息缓存在 Guava Cache中）
 * 6、支持worker到gopush的重传机制
 * 7、可以方便的集成多种推送服务厂商
+
+##架构图
+ ![superpush](http://static.oschina.net/uploads/space/2015/0510/171730_f1VM_241255.png "superpush architecture")
