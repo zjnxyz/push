@@ -49,7 +49,7 @@ class TreeholeMessageActor extends Actor with ActorLogging{
       }
       if(studentIds != null && studentIds.size > 0){
 
-        val result = GopushUtil.pushMoreMessage(g.toJson(pushMessage),studentIds.substring(0,studentIds.length-1))
+        val result = GopushUtil.pushMoreMessage( g.toJson(pushMessage), studentIds.substring(0,studentIds.length-1), treeholeMessageMsg.expireTime)
         MethodHelper.monitorStatus(result)
         logBack.info("gopush-->result:"+result+": chatId :"+ studentIds +" :message: "+ g.toJson(pushMessage) )
       }
@@ -108,7 +108,7 @@ class ApnsTreeholeMessageActor extends Actor with ActorLogging{
       }
 
       if(jpushStudentIds.size() > 0){
-        val jpush = new TreeholeMessageMsg(jpushStudentIds,treeholeMessageMsg.treeholeMessageNews)
+        val jpush = new TreeholeMessageMsg(jpushStudentIds,treeholeMessageMsg.treeholeMessageNews,treeholeMessageMsg.confirmId,treeholeMessageMsg.expireTime)
         jpushTreeholeMessageActor ! jpush
       }
 

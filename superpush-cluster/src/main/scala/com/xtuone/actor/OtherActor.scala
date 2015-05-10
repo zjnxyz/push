@@ -52,7 +52,7 @@ class OtherActor  extends Actor with ActorLogging{
       apnsOtherActor ! otherMsg
 
       if(studentIds != null && studentIds.size > 0){
-        val result = GopushUtil.pushMoreMessage(g.toJson(pushMessage),studentIds.substring(0,studentIds.length-1))
+        val result = GopushUtil.pushMoreMessage(g.toJson(pushMessage), studentIds.substring(0,studentIds.length-1), otherMsg.expireTime)
         MethodHelper.monitorStatus(result)
         logBack.info("gopush-->result:"+result+": chatId :"+studentIds+" message:"+ g.toJson(pushMessage))
       }
@@ -108,7 +108,7 @@ class ApnsOtherActor extends Actor with ActorLogging{
       }
 
       if(jpushStudentIds.size() > 0){
-        val jpushOtherMsg = new OtherMsg(jpushStudentIds,otherMsg.alert,otherMsg.oId,otherMsg.message)
+        val jpushOtherMsg = new OtherMsg(jpushStudentIds,otherMsg.alert,otherMsg.oId,otherMsg.message, otherMsg.confirmId, otherMsg.expireTime)
         jpushOtherActor ! jpushOtherMsg
       }
 

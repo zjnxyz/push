@@ -6,7 +6,7 @@ import akka.actor.{Props, ActorSystem}
 import com.typesafe.config.{Config, ConfigFactory}
 import com.xtuone.actor.WorkerActor
 import com.xtuone.message.Register
-import com.xtuone.scheduler.HeartbeatScheduler
+import com.xtuone.scheduler.{ReSendMessageScheduler, HeartbeatScheduler}
 
 /**
  * Created by Zz on 2015/1/26.
@@ -46,6 +46,10 @@ object AkkaOps {
     //启动心跳
     val heartbeatScheduler = new HeartbeatScheduler
     heartbeatScheduler.scheduler(worker)
+
+    //启动重发不成功的消息的定时任务
+    val reSendMessageScheduler = new ReSendMessageScheduler
+    reSendMessageScheduler.scheduler()
 
     actorSystem
   }

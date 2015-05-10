@@ -3,10 +3,9 @@ package com.xtuone.client.actor
 import java.util.concurrent.TimeUnit
 
 import akka.actor._
-import akka.event.Logging
 import akka.routing.{RoundRobinRoutingLogic, Router, ActorRefRoutee}
 import akka.util.Timeout
-import com.xtuone.client.util.{AkkaOps, Const}
+import com.xtuone.client.util.{MethodHelper, AkkaOps, Const}
 import com.xtuone.message._
 
 import scala.concurrent.ExecutionContext
@@ -27,16 +26,18 @@ class PushActor  extends Actor with ActorLogging{
     case chatMsg: ChatMsg =>{
       println("chatMsg")
       sendMessageToWorker(chatMsg)
+      MethodHelper.putMessageToCache(chatMsg.confirmId, chatMsg )
     }
 
     case treeholeNewsMsg: TreeholeNewsMsg =>{
-      println("treeholeNewsMsg")
       sendMessageToWorker(treeholeNewsMsg)
+      MethodHelper.putMessageToCache(treeholeNewsMsg.confirmId, treeholeNewsMsg )
     }
 
     case treeholeMessageMsg: TreeholeMessageMsg =>{
       println("treeholeMessageMsg")
       sendMessageToWorker(treeholeMessageMsg)
+      MethodHelper.putMessageToCache(treeholeMessageMsg.confirmId, treeholeMessageMsg )
     }
 
     case accountMessage: AccountMessage =>{
@@ -47,26 +48,42 @@ class PushActor  extends Actor with ActorLogging{
 
     case accountMessageV2: AccountMessageV2 =>{
       println("accountMessageV2")
-      //公众账号
+      //公众账号(正在使用)
       sendMessageToWorker(accountMessageV2)
+      MethodHelper.putMessageToCache(accountMessageV2.confirmId, accountMessageV2 )
     }
 
     case feedbackMessage:FeedbackMessage =>{
       println("feedbackMessage")
       //反馈
       sendMessageToWorker(feedbackMessage)
+      MethodHelper.putMessageToCache(feedbackMessage.confirmId, feedbackMessage )
     }
 
     case purviewMsg: PurviewMsg =>{
       println("purviewMsg")
       //权限
       sendMessageToWorker(purviewMsg)
+      MethodHelper.putMessageToCache(purviewMsg.confirmId, purviewMsg )
     }
 
     case otherMsg: OtherMsg =>{
       //其他
       sendMessageToWorker(otherMsg)
+      MethodHelper.putMessageToCache(otherMsg.confirmId, otherMsg )
     }
+
+    case result: Result =>{
+      //worker收到消息后反馈给client
+      println(" feedback result:"+result.key)
+      MethodHelper.removeMessageCache(result.key)
+    }
+
+    case anyRef:AnyRef =>{
+      println(" re send message")
+      sendMessageToWorker(anyRef)
+    }
+
   }
 
   @throws(classOf[Exception])
@@ -140,9 +157,11 @@ class PushRouter extends Actor with ActorLogging{
 
   override def receive: Actor.Receive = {
     case chatMsg: ChatMsg =>{
+      println("ch----->")
       router.route(chatMsg,sender())
     }
     case treeholeNewsMsg: TreeholeNewsMsg =>{
+      println("treeholeNewsMsg-->")
       router.route(treeholeNewsMsg,sender())
     }
 

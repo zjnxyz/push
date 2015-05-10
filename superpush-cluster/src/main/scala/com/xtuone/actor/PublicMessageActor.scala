@@ -53,7 +53,7 @@ class PublicMessageActor extends Actor with ActorLogging{
       //判断公众账号信息是否需要更新
       updateAccountInfo(publicMessageMsg.superAccountInfo)
       //保存消息（）
-      val messageId = savePublicMessage(publicMessageMsg.superPushMessageDetail)
+      val messageId = savePublicMessage(publicMessageMsg.superPushMessageDetail, publicMessageMsg.expireTime)
       //加入到redis中
       val sendTimeLong = System.currentTimeMillis()
       saveMessageToEveryOne(publicMessageMsg.studentIds,messageId,sendTimeLong)
@@ -64,7 +64,7 @@ class PublicMessageActor extends Actor with ActorLogging{
       }
 
       if(studentIds != null && studentIds.size > 0){
-        val result = GopushUtil.pushMoreMessage(g.toJson(pushMessage),studentIds.substring(0,studentIds.length-1))
+        val result = GopushUtil.pushMoreMessage(g.toJson(pushMessage), studentIds.substring(0,studentIds.length-1), publicMessageMsg.expireTime)
         //测试时，暂时改为一直失败
         MethodHelper.monitorStatus(result)
         logBack.info("gopush-->result:"+result+": chatId :"+studentIds)
@@ -151,7 +151,7 @@ class PublicMessageActor extends Actor with ActorLogging{
    * 保存公众账号信息
    * @param superPushMessageDetail
    */
-  private def savePublicMessage( superPushMessageDetail: SuperPushMessageDetail): Int ={
+  private def savePublicMessage( superPushMessageDetail: SuperPushMessageDetail, expireTime: Long = Constant.expire_redis): Int ={
 
     val idKey = "SuperPushMessageDetail"
     val idStr = RedisUtil213.init().getString(idKey)
@@ -233,7 +233,7 @@ class PublicMessageActor extends Actor with ActorLogging{
 
       RedisUtil213.init().hashMultipleSet(key,map)
       //过期时间
-      RedisUtil213.init().expire(key,Constant.expire_redis)
+      RedisUtil213.init().expire(key,expireTime.toInt)
 
     }finally {
       JdbcUtil.colsePstmt(statement)
@@ -339,7 +339,10 @@ class ApnsPublicMessageActor extends Actor with ActorLogging{
       }
 
       if(jpushStudentIds.size() > 0){
-        val jpushPublicMessageMsg = new PublicMessageMsg(jpushStudentIds,publicMessageMsg.alert,publicMessageMsg.superPushMessageDetail,publicMessageMsg.superAccountInfo)
+
+        val jpushPublicMessageMsg = new PublicMessageMsg(jpushStudentIds,publicMessageMsg.alert, publicMessageMsg.superPushMessageDetail,
+          publicMessageMsg.superAccountInfo, publicMessageMsg.confirmId ,publicMessageMsg.expireTime)
+
         jpushPublicMessageActor ! jpushPublicMessageMsg
       }
 

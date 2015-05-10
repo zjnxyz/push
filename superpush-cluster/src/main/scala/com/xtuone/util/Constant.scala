@@ -2,7 +2,9 @@ package com.xtuone.util
 
 import java.sql.{Connection, ResultSet, PreparedStatement}
 import java.util
+import java.util.concurrent.TimeUnit
 
+import com.google.common.cache.CacheBuilder
 import com.xtuone.util.jdbc.JdbcUtil
 import com.xtuone.util.redis.RedisUtil213
 import org.slf4j.LoggerFactory
@@ -32,11 +34,40 @@ object Constant {
   //短信内容
   val content = "十分钟内推送到gopush都失败了，快去检查下吧"
 
+  /**
+   * 定时重发时间
+   */
+  val RE_SEND_MESSAGE_TIME = 5000
+
+  /**
+   * 分割标识符
+   */
+  val SPLIT_FLAG = "#>zjn<#"
 
 
 }
 
 object MethodHelper{
+
+  var preCacheKey = 0L
+
+  /**
+   * 获取用来缓存的key
+   * @return
+   */
+  def getCacheKey():Long = {
+    var currCacheKey = System.currentTimeMillis()
+    if(currCacheKey == preCacheKey){
+      currCacheKey = currCacheKey +1
+      preCacheKey = currCacheKey
+    }
+    currCacheKey
+  }
+
+  val MessageCache =  CacheBuilder.newBuilder()
+    .expireAfterWrite(Constant.RE_SEND_MESSAGE_TIME*3,TimeUnit.MILLISECONDS)
+    .concurrencyLevel(8)
+    .build[String, String]()
 
   val logBack = LoggerFactory.getLogger(classOf[String])
 
@@ -194,6 +225,25 @@ object MethodHelper{
        failureNum = 0
      }
    }
+
+  /**
+   * 将消息存入缓存中
+   * @param message
+   */
+  def putMessageToCache(key:String, message:String):Unit = {
+    if(getMessageToCache(key) == null){
+      MessageCache.put(key,message)
+    }
+  }
+
+  def getMessageToCache(key:String):String ={
+    MessageCache.getIfPresent(key)
+  }
+
+  def removeMessageCache(key: String):Unit = {
+    MessageCache.invalidate(key)
+  }
+
 }
 
 object MessageType{

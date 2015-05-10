@@ -41,7 +41,7 @@ class PaperActor extends Actor with ActorLogging{
       val pushMessage = new BaseMessageBO
       pushMessage.setPd(g.toJson(chatMsg.pager))
       pushMessage.setMt(MessageType.CHAT)
-      val result = GopushUtil.pushMessage( g.toJson(pushMessage) ,MethodHelper.getPushKey(chatMsg.chatIdStr))
+      val result = GopushUtil.pushMessage( g.toJson(pushMessage) ,MethodHelper.getPushKey(chatMsg.chatIdStr), chatMsg.expireTime)
       MethodHelper.monitorStatus(result)
       logBack.info("gopush-->result:"+result+": chatId :"+chatMsg.chatIdStr+" :message: "+ g.toJson(pushMessage) )
 

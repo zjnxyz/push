@@ -38,6 +38,10 @@ object Const {
   val CLIENT_AKKA_SYSTEM_NAME ="ClientNodeApp"
 
   val CLIENT_ACTOR_NAME ="Client"
+  /**
+   * 定时重发时间
+   */
+  val RE_SEND_MESSAGE_TIME = 5000
 
 
 

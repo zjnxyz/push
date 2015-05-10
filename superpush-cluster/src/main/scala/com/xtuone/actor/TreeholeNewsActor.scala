@@ -43,7 +43,7 @@ class TreeholeNewsActor extends Actor with ActorLogging{
       pushMessage.setMt(MessageType.TREEHOLE_REPLY)
       pushMessage.setPd(g.toJson(treeholeNewsMsg.unReadNews))
 
-      val result = GopushUtil.pushMessage(g.toJson(pushMessage),MethodHelper.getPushKey(treeholeNewsMsg.studentId))
+      val result = GopushUtil.pushMessage( g.toJson(pushMessage), MethodHelper.getPushKey(treeholeNewsMsg.studentId), treeholeNewsMsg.expireTime )
       MethodHelper.monitorStatus(result)
       logBack.info("gopush-->result:"+result+": chatId :"+ treeholeNewsMsg.studentId +" :message: "+ g.toJson(pushMessage) )
       //推送到apns

@@ -49,10 +49,12 @@ class PushDispatcher extends Actor with ActorLogging{
     case chatMsg:ChatMsg =>{//推送聊天消息
 //      logBack.debug("聊天信息")
       paperRouter ! chatMsg
+      sender() ! new Result(chatMsg.confirmId)
     }
     case treeholeNewsMsg:TreeholeNewsMsg =>{//推送下课聊消息
 //      logBack.debug("推送下课聊消息")
       treeholeNewsRouter ! treeholeNewsMsg
+      sender() ! new Result(treeholeNewsMsg.confirmId)
     }
     case treeholeMessageMsg:TreeholeMessageMsg =>{//推送下课聊主题
 //      logBack.debug("推送下课聊主题")
@@ -66,38 +68,48 @@ class PushDispatcher extends Actor with ActorLogging{
 
     case accountMessage:AccountMessage =>{//推送公众账号信息
       logBack.debug("推送公众账号信息2")
-      val studentIds = new util.ArrayList[Int]()
-      accountMessage.studentIds.foreach{
-        case idString:String => studentIds.add(idString.toInt)
-      }
-       val publicMessageMsg = new PublicMessageMsg(studentIds,accountMessage.alert,
-         accountMessage.superPushMessageDetail,accountMessage.superAccountInfo)
-      publicMessageRouter ! publicMessageMsg
+//      val studentIds = new util.ArrayList[Int]()
+//      accountMessage.studentIds.foreach{
+//        case idString:String => studentIds.add(idString.toInt)
+//      }
+//       val publicMessageMsg = new PublicMessageMsg(studentIds,accountMessage.alert,
+//         accountMessage.superPushMessageDetail,accountMessage.superAccountInfo)
+//      publicMessageRouter ! publicMessageMsg
     }
 
     case feedbackMessage:FeedbackMessage =>{
       logBack.debug("feedbackMessage")
+      sender() ! new Result(feedbackMessage.confirmId)
+
       feedbackRouter ! feedbackMessage
+
     }
 
     case accountMessageV2:AccountMessageV2 =>{
       logBack.debug("accountMessageV2")
+      sender() ! new Result(accountMessageV2.confirmId)
+
       val studentIds = new util.ArrayList[Int]()
       accountMessageV2.studentIds.foreach{
         case idString:String => studentIds.add(idString.toInt)
       }
       val publicMessageMsg = new PublicMessageMsg(studentIds,accountMessageV2.alert,
-        accountMessageV2.superPushMessageDetail,accountMessageV2.superAccountInfo)
+        accountMessageV2.superPushMessageDetail,accountMessageV2.superAccountInfo,accountMessageV2.getConfirmId,accountMessageV2.getExpireTime)
       publicMessageRouter ! publicMessageMsg
     }
     case linkMessageMsg:LinkMessageMsg =>{
       logBack.debug("linkMessageMsg")
+      sender() ! new Result(linkMessageMsg.confirmId)
+
       linkRounter ! linkMessageMsg
     }
     case purviewMsg:PurviewMsg =>{
+      sender() ! new Result(purviewMsg.confirmId)
       purviewRounter ! purviewMsg
     }
     case otherMsg:OtherMsg =>{
+
+      sender() ! new Result(otherMsg.confirmId)
       otherRouter ! otherMsg
     }
     case _ =>{

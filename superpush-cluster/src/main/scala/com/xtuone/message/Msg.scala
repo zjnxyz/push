@@ -14,14 +14,16 @@ case class Message (si: Int,mt: Int,pd: String )
  * @param studentIds
  * @param message
  */
-case class OtherMsg(studentIds:util.ArrayList[String], alert: String, oId: Int,  message: Message)
+@SerialVersionUID(-1L)
+case class OtherMsg(studentIds:util.ArrayList[String], alert: String, oId: Int,  message: Message, confirmId: String, expireTime:Long)
 
 /**
  * 用户权限分数
  * @param studentId
  * @param purview
  */
-case class PurviewMsg(studentId: Int, purview: Purview)
+@SerialVersionUID(-1L)
+case class PurviewMsg(studentId: Int, purview: Purview, confirmId: String, expireTime:Long)
 
 /**
  * 权限
@@ -36,7 +38,8 @@ case class Purview(sti: Int, pv: Int, r: Int )
  * @param studentIds
  * @param linkMessage
  */
-case class LinkMessageMsg(studentIds:util.ArrayList[String],linkMessage:LinkMessage)
+@SerialVersionUID(-1L)
+case class LinkMessageMsg(studentIds:util.ArrayList[String],linkMessage:LinkMessage, confirmId: String, expireTime:Long)
 
 /**
  * 链接消息体
@@ -53,7 +56,8 @@ case class LinkMessage( url:String, hasVerification:Int, title:String, context: 
  * @param studentId
  * @param messageIds
  */
-case class FeedbackMessage(studentId:Int, messageIds:String, callBackUrl: String)
+@SerialVersionUID(-1L)
+case class FeedbackMessage(studentId:Int, messageIds:String, callBackUrl: String, confirmId: String, expireTime:Long)
 
 /**
  * 公众账号消息推送
@@ -62,8 +66,9 @@ case class FeedbackMessage(studentId:Int, messageIds:String, callBackUrl: String
  * @param superPushMessageDetail
  * @param superAccountInfo
  */
+@SerialVersionUID(-1L)
 case class PublicMessageMsg(studentIds:util.ArrayList[Int], alert: String,
-                            superPushMessageDetail: SuperPushMessageDetail,superAccountInfo: SuperAccountInfo)
+                            superPushMessageDetail: SuperPushMessageDetail,superAccountInfo: SuperAccountInfo, confirmId: String, expireTime:Long)
 
 /**
  * 公众账号消息推送
@@ -81,6 +86,8 @@ class AccountMessageV2 extends Serializable{
   @BeanProperty var studentIds:util.ArrayList[String] =_
   @BeanProperty var superPushMessageDetail: SuperPushMessageDetail =_
   @BeanProperty var superAccountInfo: SuperAccountInfo =_
+  @BeanProperty var confirmId :String =_
+  @BeanProperty var expireTime:Long =_
 }
 
 /**
@@ -89,7 +96,7 @@ class AccountMessageV2 extends Serializable{
  * @param treeholeMessageNews
  */
 @SerialVersionUID(-566009590756816263L)
-case class TreeholeMessageMsg(studentIds:util.ArrayList[String],treeholeMessageNews: TreeholeMessageNews)
+case class TreeholeMessageMsg(studentIds:util.ArrayList[String],treeholeMessageNews: TreeholeMessageNews, confirmId: String, expireTime:Long)
 
 /**
  * 下课聊主题消息体
@@ -103,7 +110,8 @@ case class TreeholeMessageNews(c: String, mi: Int, t: String)
  * 下课聊消息推送
  * @param studentId
  */
-case class TreeholeNewsMsg(studentId:Int,unReadNews:UnReadNews)
+@SerialVersionUID(-1L)
+case class TreeholeNewsMsg(studentId:Int,unReadNews:UnReadNews, confirmId: String, expireTime:Long )
 
 /**
  * 未读的下课聊消息数量
@@ -121,7 +129,8 @@ case class UnReadNews(t: String, ud:Int, cc:Int, pd: Long, c: String)
  * @param contactsTypeInt(接收人的类型)
  * @param pager（发送人发送的数据）
  */
-case class ChatMsg(chatIdStr:String,contactsTypeInt:Int, pager:Paper)
+@SerialVersionUID(-1L)
+case class ChatMsg(chatIdStr:String,contactsTypeInt:Int, pager:Paper, confirmId: String, expireTime:Long )
 
 /**
  * 小纸条消息体
@@ -175,6 +184,9 @@ case class Register(ip: String, port: Int, connectType: Int)
  * @param connectType
  */
 case class Heartbeat(ip: String, port: Int, connectType: Int)
+
+@SerialVersionUID(-1L)
+case class Result(key: String)
 
 
 

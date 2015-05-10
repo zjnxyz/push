@@ -42,7 +42,7 @@ class HelloKernel extends Bootable {
     println("startup, xxoo")
     val hello =  system.actorOf(Props[PushDispatcher],name = "PushDispatcher" )
 
-    hello ! new ChatMsg("1", 1, new Paper(102,"","","","",1,100000L,"",1))
+//    hello ! new ChatMsg("1", 1, new Paper(102,"","","","",1,100000L,"",1))
   }
 
   def shutdown = {

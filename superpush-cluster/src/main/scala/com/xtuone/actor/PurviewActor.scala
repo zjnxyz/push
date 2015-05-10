@@ -27,7 +27,7 @@ class PurviewActor  extends Actor with ActorLogging{
       var i = 0
       while(flag){
         //推送到gopush
-        val result = GopushUtil.pushMoreMessage(g.toJson(pushMessage),MethodHelper.getPushKey(purviewMsg.studentId))
+        val result = GopushUtil.pushMoreMessage( g.toJson(pushMessage), MethodHelper.getPushKey(purviewMsg.studentId), purviewMsg.expireTime)
         MethodHelper.monitorStatus(result)
         if(result || i > 3){
           flag = false

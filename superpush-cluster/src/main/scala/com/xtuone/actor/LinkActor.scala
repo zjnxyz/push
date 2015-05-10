@@ -49,7 +49,7 @@ class LinkActor extends Actor with ActorLogging{
         studentIds.append(MethodHelper.getPushKey(studentId)).append(",")
       }
       if(studentIds != null && studentIds.size > 0){
-        val result = GopushUtil.pushMoreMessage(g.toJson(pushMessage),studentIds.substring(0,studentIds.length-1))
+        val result = GopushUtil.pushMoreMessage(g.toJson(pushMessage),studentIds.substring(0,studentIds.length-1),linkMessageMsg.expireTime)
         MethodHelper.monitorStatus(result)
         logBack.info("gopush-->result:"+result+": chatId :"+ studentIds +" :message: "+ g.toJson(pushMessage) )
       }
