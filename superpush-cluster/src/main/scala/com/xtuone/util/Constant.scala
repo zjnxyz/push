@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory
 object Constant {
 
   //gopushKey秘钥
-  val gopushKey = "_.super_cn_"
+  val gopushKey = "***"
   //客服
   val contactsTypeInt_kufu = 1
   //学生
@@ -28,7 +28,7 @@ object Constant {
  //用户apns未读消息数量
   val KEY_APNS_NO_READ_NUM ="push:apns:studentId:"
   //接收短信通知的号码
-  val mobileNumbers = "18027326692,18102215296"
+  val mobileNumbers = "180273*****,181022*****"
   //数量
   val num = 2
   //短信内容
@@ -92,11 +92,11 @@ object MethodHelper{
    * @return
    */
   def getAliasName(studentId:Int):String = {
-    val aliasName = MD5.getMD5("student_" + studentId)
+    val aliasName = MD5.getMD5("***_" + studentId)
     aliasName
   }
   def getAliasName(studentId:String):String = {
-    val aliasName = MD5.getMD5("student_" + studentId)
+    val aliasName = MD5.getMD5("***_" + studentId)
     aliasName
   }
 
