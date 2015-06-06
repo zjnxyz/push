@@ -6,7 +6,7 @@
   <groupId>com.xtuone</groupId>
   <artifactId>superpush-client</artifactId>
   <packaging>jar</packaging>
-  <version>1.4.0-SNAPSHOT</version>
+  <version>1.4.2-SNAPSHOT</version>
 
   <name>A Camel Scala Route</name>
   <url>http://www.myorganization.org</url>

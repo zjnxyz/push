@@ -20,4 +20,6 @@ object MessageType {
   val LINK = 12
   //用户权限
   val PURVIEW = 13
+  //匹配
+  val MATCH = 14
 }

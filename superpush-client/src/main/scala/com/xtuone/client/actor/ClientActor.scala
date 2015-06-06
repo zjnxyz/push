@@ -44,6 +44,8 @@ class ClientActor extends Actor with ActorLogging{
 
       //当前可用的worker列表
       val workerList = workers.workerList
+      System.out.println("workerList:"+workerList)
+
       if(MethodHelper.isNotEmpty(workerList)){
         //处理当前的worker
         Const.workerUrls = List()
@@ -57,7 +59,6 @@ class ClientActor extends Actor with ActorLogging{
             (AkkaOps.toAkkaUrl(host,port,Const.WORK_AKKA_SYSTEM_NAME,Const.WORK_ACTOR_NAME)) :: Const.workerUrls
           }
         }
-
       }
     }
 
@@ -123,6 +124,8 @@ class ClientActor extends Actor with ActorLogging{
    * 注册到master
    */
   def tryRegisterAllMasters(register: Register): Unit ={
+
+    println("masterUrls:"+Const.masterUrls)
     for(masterUrl <- Const.masterUrls){
       val master = context.actorSelection(masterUrl.toString)
       val masterFuture = master resolveOne
