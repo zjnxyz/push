@@ -58,8 +58,12 @@ class TreeholeMessageActor extends Actor with ActorLogging{
 
     }
     case Terminated(a) =>{
-      apnsTreeholeMessageActor = context.actorOf(Props[ApnsTreeholeNewsActor])
-      context watch apnsTreeholeMessageActor
+      if(a.compareTo(apnsTreeholeMessageActor) == 0){
+        context.stop(apnsTreeholeMessageActor)
+        apnsTreeholeMessageActor = context.actorOf(Props[ApnsTreeholeNewsActor])
+        context watch apnsTreeholeMessageActor
+      }
+
     }
 
   }
@@ -114,8 +118,12 @@ class ApnsTreeholeMessageActor extends Actor with ActorLogging{
 
     }
     case Terminated(a) =>{
-      jpushTreeholeMessageActor = context.actorOf(Props[JpushTreeholeMessageActor])
-      context watch jpushTreeholeMessageActor
+      if(a.compareTo(jpushTreeholeMessageActor) == 0){
+        context.stop(jpushTreeholeMessageActor)
+        jpushTreeholeMessageActor = context.actorOf(Props[JpushTreeholeMessageActor])
+        context watch jpushTreeholeMessageActor
+      }
+
     }
 
   }

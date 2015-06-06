@@ -3,6 +3,7 @@ package com.xtuone.actor
 import java.sql.{Connection, ResultSet, PreparedStatement}
 import java.util
 import java.util.Date
+import javapns.notification.PushedNotification
 
 import akka.actor._
 import akka.event.Logging
@@ -40,6 +41,7 @@ class PublicMessageActor extends Actor with ActorLogging{
     syncRevMessageActor = context.actorOf(Props[SyncRevMessageActor])
 
     context watch apnsPublicMessageActor
+    context watch syncRevMessageActor
   }
 
   override def receive: Receive = {
@@ -78,8 +80,13 @@ class PublicMessageActor extends Actor with ActorLogging{
     }
 
     case Terminated(a) =>{
-      apnsPublicMessageActor = context.actorOf(Props[ApnsPublicMessageActor])
-      context watch apnsPublicMessageActor
+      if( a.compareTo(apnsPublicMessageActor) == 0){
+        context.stop(apnsPublicMessageActor)
+        apnsPublicMessageActor = context.actorOf(Props[ApnsPublicMessageActor])
+        context watch apnsPublicMessageActor
+        logBack.info(" restart apnsPublicMessageActor ")
+      }
+
     }
 
   }
@@ -318,8 +325,9 @@ class ApnsPublicMessageActor extends Actor with ActorLogging{
       //推送到 apns
       for( studentId <- publicMessageMsg.studentIds) {
         val deviceToken = MethodHelper.findUserDeviceToken(studentId + "")
-        logBack.info("deviceToken:"+deviceToken)
+
         if (MethodHelper.isNotEmpty(deviceToken)) {
+
           val apnsMessage = new AnpsMessage
           //设置弹出内容
           apnsMessage.setAlert(publicMessageMsg.alert)
@@ -330,8 +338,13 @@ class ApnsPublicMessageActor extends Actor with ActorLogging{
           val extras = new util.HashMap[String,String]()
           extras.put("mt",MessageType.PUBLIC_ACCOUNTS+"")
           apnsMessage.setExtras(extras)
-         val result = ApnsPushUtil.push(apnsMessage,deviceToken)
-          logBack.info("apns-->result:"+result+": chatId :"+ studentId +" :message: ")
+          val result = ApnsPushUtil.push(apnsMessage,deviceToken)
+
+          for( pn <- result.getFailedNotifications ){
+            MethodHelper.removeFailerDeviceToken(String.valueOf(studentId))
+          }
+
+          logBack.info("apns-->result:"+result+": chatId :"+ studentId +" deviceToken:"+deviceToken)
 
         }else{
           jpushStudentIds.add(studentId)
@@ -348,8 +361,13 @@ class ApnsPublicMessageActor extends Actor with ActorLogging{
 
     }
     case Terminated(a) =>{
-      jpushPublicMessageActor = context.actorOf(Props[JpushPublicMessageActor])
-      context watch jpushPublicMessageActor
+      if( a.compareTo(jpushPublicMessageActor) == 0){
+        context.stop(jpushPublicMessageActor)
+        jpushPublicMessageActor = context.actorOf(Props[JpushPublicMessageActor])
+        context watch jpushPublicMessageActor
+        logBack.info(" restart jpushPublicMessageActor ")
+      }
+
     }
   }
 }

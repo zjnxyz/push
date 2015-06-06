@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory
 object Constant {
 
   //gopushKey秘钥
-  val gopushKey = "***"
+  val gopushKey = "_.super_cn_"
   //客服
   val contactsTypeInt_kufu = 1
   //学生
@@ -28,7 +28,7 @@ object Constant {
  //用户apns未读消息数量
   val KEY_APNS_NO_READ_NUM ="push:apns:studentId:"
   //接收短信通知的号码
-  val mobileNumbers = "180273*****,181022*****"
+  val mobileNumbers = "18027326692,18102215296"
   //数量
   val num = 2
   //短信内容
@@ -37,7 +37,7 @@ object Constant {
   /**
    * 定时重发时间
    */
-  val RE_SEND_MESSAGE_TIME = 5000
+  val RE_SEND_MESSAGE_TIME = 5*60*1000L
 
   /**
    * 分割标识符
@@ -92,11 +92,11 @@ object MethodHelper{
    * @return
    */
   def getAliasName(studentId:Int):String = {
-    val aliasName = MD5.getMD5("***_" + studentId)
+    val aliasName = MD5.getMD5("student_" + studentId)
     aliasName
   }
   def getAliasName(studentId:String):String = {
-    val aliasName = MD5.getMD5("***_" + studentId)
+    val aliasName = MD5.getMD5("student_" + studentId)
     aliasName
   }
 
@@ -139,6 +139,16 @@ object MethodHelper{
       }
     }
     pushUrl
+  }
+
+  /**
+   * 移除失败的key
+   * @param studentId
+   */
+  def removeFailerDeviceToken(studentId:String):Unit={
+    val key = "ApnsRelation:"+studentId
+    RedisUtil213.init().delKey(key)
+
   }
 
   def findUserDeviceToken(studentId:String): String ={
@@ -263,5 +273,7 @@ object MessageType{
   val LINK = 12
   //用户权限
   val PURVIEW = 13
+  //匹配
+  val MATCH = 14
 
 }

@@ -37,7 +37,7 @@ public class ApnsPushUtil {
     //是否为生产环境
     private static boolean isProduction = true;
     //推送完是否关闭
-    private static boolean closeAfter = true;
+    private static boolean closeAfter = false;
 
     static {
         certificatePath = ConfigFactory.load().getString("apns.certificatePath");
@@ -57,8 +57,12 @@ public class ApnsPushUtil {
                 device.setToken(deviceToken[i]);
                 try {
                     PushedNotification notification =initPushManager().sendNotification(device,buildIosNoticationPayload(anpsMessage) , closeAfter);
+                    if(!notification.isSuccessful()){
+                        //如果失败后，重新连接
+                        restartConnection();
+                    }
                     notifications.add(notification);
-                } catch (CommunicationException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -145,7 +149,34 @@ public class ApnsPushUtil {
                 e.printStackTrace();
             }
         }
+
         return pushManager;
+    }
+
+    private static void restartConnection(){
+        if(pushManager == null){
+            pushManager = new PushNotificationManager();
+            try {
+                // true：表示的是产品发布推送服务 false：表示的是产品测试推送服务
+                pushManager.initializeConnection(new AppleNotificationServerBasicImpl(certificatePath, certificatePassword, isProduction));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }else{
+            try{
+                pushManager.restartConnection(new AppleNotificationServerBasicImpl(certificatePath, certificatePassword, isProduction));
+            }catch (Exception e){
+                e.printStackTrace();
+                //重新初始化
+                try {
+                    pushManager.initializeConnection(new AppleNotificationServerBasicImpl(certificatePath, certificatePassword, isProduction));
+                }catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+
+            }
+
+        }
     }
 
 }

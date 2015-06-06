@@ -58,8 +58,13 @@ class OtherActor  extends Actor with ActorLogging{
       }
     }
     case Terminated(a) =>{
-      apnsOtherActor = context.actorOf(Props[ApnsOtherActor])
-      context watch apnsOtherActor
+      if(a.compareTo(apnsOtherActor) == 0){
+        context.stop(apnsOtherActor)
+        apnsOtherActor = context.actorOf(Props[ApnsOtherActor])
+        context watch apnsOtherActor
+        logBack.info(" restart apnsOtherActor ")
+      }
+
     }
 
   }
@@ -72,7 +77,6 @@ class ApnsOtherActor extends Actor with ActorLogging{
 
   val logBack = LoggerFactory.getLogger(classOf[ApnsOtherActor])
   var jpushOtherActor: ActorRef =_
-
 
   @throws(classOf[Exception])
   override def preStart(): Unit = {
@@ -115,8 +119,12 @@ class ApnsOtherActor extends Actor with ActorLogging{
     }
 
     case Terminated(a) =>{
-      jpushOtherActor = context.actorOf(Props[JpushOtherActor])
-      context watch jpushOtherActor
+      if(a.compareTo(jpushOtherActor) == 0){
+        logBack.info(" restart jpushOtherActor")
+        context.stop(jpushOtherActor)
+        jpushOtherActor = context.actorOf(Props[JpushOtherActor])
+        context watch jpushOtherActor
+      }
     }
 
   }
@@ -171,7 +179,6 @@ class OtherRouter extends Actor with ActorLogging{
 
   override def receive: Actor.Receive = {
     case  otherMsg:OtherMsg =>{
-      logBack.info("其他消息推送")
       router.route(otherMsg,sender())
     }
     case Terminated(a) =>{

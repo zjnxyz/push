@@ -10,6 +10,8 @@ import scala.concurrent.duration._
 
 /**
  * Created by Zz on 2015/4/8.
+ * 像master发送一个心跳
+ * 心跳频率是5分钟一次
  */
 class HeartbeatScheduler {
 

@@ -34,6 +34,7 @@ class TreeholeNewsActor extends Actor with ActorLogging{
     apnsActor = context.actorOf(Props[ApnsTreeholeNewsActor])
     wpPushActor = context.actorOf(Props[WpPushTreeholeNewsActor])
     context watch apnsActor
+    context watch wpPushActor
   }
 
   override def receive: Receive = {
@@ -49,14 +50,23 @@ class TreeholeNewsActor extends Actor with ActorLogging{
       //推送到apns
       apnsActor ! treeholeNewsMsg
 
-
       //推送wp
       wpPushActor ! treeholeNewsMsg
 
     }
     case Terminated(a) =>{
-      apnsActor = context.actorOf(Props[ApnsTreeholeNewsActor])
-      context watch apnsActor
+      if(a.compareTo(apnsActor) == 0){
+        context.stop(apnsActor)
+        apnsActor = context.actorOf(Props[ApnsTreeholeNewsActor])
+        context watch apnsActor
+      }
+
+      if(a.compareTo(wpPushActor) == 0){
+        context.stop(wpPushActor)
+        wpPushActor = context.actorOf(Props[WpPushTreeholeNewsActor])
+        context watch wpPushActor
+      }
+
     }
 
   }
@@ -104,8 +114,13 @@ class ApnsTreeholeNewsActor extends Actor with ActorLogging{
       }
     }
     case Terminated(a) =>{
-      jpushActor = context.actorOf(Props[JpushTreeholeNewsActor])
-      context watch jpushActor
+
+      if(a.compareTo(jpushActor) == 0){
+        context.stop(jpushActor)
+        jpushActor = context.actorOf(Props[JpushTreeholeNewsActor])
+        context watch jpushActor
+      }
+
     }
 
   }

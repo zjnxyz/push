@@ -43,7 +43,7 @@ class PaperActor extends Actor with ActorLogging{
       pushMessage.setMt(MessageType.CHAT)
       val result = GopushUtil.pushMessage( g.toJson(pushMessage) ,MethodHelper.getPushKey(chatMsg.chatIdStr), chatMsg.expireTime)
       MethodHelper.monitorStatus(result)
-      logBack.info("gopush-->result:"+result+": chatId :"+chatMsg.chatIdStr+" :message: "+ g.toJson(pushMessage) )
+      logBack.info("gopush-->result:"+result+": chatId :"+chatMsg.chatIdStr )
 
       //推apns(学生用户)
       if(chatMsg.contactsTypeInt == Constant.contactsTypeInt_student){
@@ -51,7 +51,13 @@ class PaperActor extends Actor with ActorLogging{
       }
     }
     case Terminated(a) =>{
-      apnsPaperActor = context.actorOf(Props[ApnsPaperActor])
+      if( a.compareTo(apnsPaperActor) == 0 ){
+        context.stop(apnsPaperActor)
+        apnsPaperActor = context.actorOf(Props[ApnsPaperActor])
+        context watch apnsPaperActor
+        logBack.info(" restart apnsPaperActor")
+      }
+
     }
   }
 
@@ -69,9 +75,8 @@ class ApnsPaperActor extends Actor with ActorLogging{
 
       val deviceToken = MethodHelper.findUserDeviceToken(chatMsg.chatIdStr)
 
-      logBack.info("deviceToken:"+deviceToken+"   chatId:"+ chatMsg.chatIdStr )
-
       if(MethodHelper.isNotEmpty(deviceToken)){
+        logBack.info("deviceToken:"+deviceToken+"   chatId:"+ chatMsg.chatIdStr )
         val apnsMessage = new AnpsMessage
         //增加badge数量
         val badge = RedisUtil213.init().incr(Constant.KEY_APNS_NO_READ_NUM+chatMsg.chatIdStr)
@@ -84,9 +89,7 @@ class ApnsPaperActor extends Actor with ActorLogging{
         apnsMessage.setExtras(extras)
         //推送到apns
         val result =  ApnsPushUtil.push(apnsMessage,deviceToken)
-
-        val g = new Gson()
-        logBack.info("apns-->result:"+result+": chatId :"+chatMsg.chatIdStr+" :message: "+ g.toJson(apnsMessage) )
+        logBack.info("apns-->result:"+result+": chatId :"+chatMsg.chatIdStr )
       }
 
     }

@@ -57,8 +57,12 @@ class LinkActor extends Actor with ActorLogging{
       apnsLinkActor ! linkMessageMsg
     }
     case Terminated(a) =>{
-      apnsLinkActor = context.actorOf(Props[ApnsLinkActor])
-      context watch apnsLinkActor
+      if(a.compareTo(apnsLinkActor) == 0){
+        logBack.info(" restart apnsLinkActor ")
+        context.stop(apnsLinkActor)
+        apnsLinkActor = context.actorOf(Props[ApnsLinkActor])
+        context watch apnsLinkActor
+      }
     }
   }
 }

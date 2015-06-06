@@ -96,7 +96,6 @@ class WorkerActor extends Actor with ActorLogging{
     }
 
     if(!MethodHelper.isNotEmpty(activeMasterUrl)){
-      println("---")
       activeMasterUrl = Const.masterUrls.get(numTemp)
     }
 
