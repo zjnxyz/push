@@ -146,8 +146,8 @@ object MethodHelper{
    * @param studentId
    */
   def removeFailerDeviceToken(studentId:String):Unit={
-    val key = "ApnsRelation:"+studentId
-    RedisUtil213.init().delKey(key)
+//    val key = "ApnsRelation:"+studentId
+//    RedisUtil213.init().delKey(key)
 
   }
 
@@ -241,9 +241,9 @@ object MethodHelper{
    * @param message
    */
   def putMessageToCache(key:String, message:String):Unit = {
-    if(getMessageToCache(key) == null){
-      MessageCache.put(key,message)
-    }
+//    if(getMessageToCache(key) == null){
+//      MessageCache.put(key,message)
+//    }
   }
 
   def getMessageToCache(key:String):String ={

@@ -56,21 +56,25 @@ class PushDispatcher extends Actor with ActorLogging{
   override def receive: Receive = {
     case chatMsg:ChatMsg =>{//推送聊天消息
       logBack.info("请求:"+chatMsg.chatIdStr+":"+chatMsg.pager.chatIdStr+":"+chatMsg.pager.contentStr+":"+chatMsg.pager.imageUrlStr+":"+System.currentTimeMillis()+":"+1)
+//      logBack.info("W统计 "+chatMsg.chatIdStr+" "+chatMsg.confirmId+" "+chatMsg.pager.contentStr+" "+chatMsg.pager.sendTimeLong )
       paperRouter ! chatMsg
       sender() ! new Result(chatMsg.confirmId)
     }
     case treeholeNewsMsg:TreeholeNewsMsg =>{//推送下课聊消息
-      logBack.info("请求:"+treeholeNewsMsg.studentId+":"+System.currentTimeMillis()+":"+2)
+//      logBack.info("请求:"+treeholeNewsMsg.studentId+":"+System.currentTimeMillis()+":"+2)
+//      logBack.info("W统计 "+ treeholeNewsMsg.studentId+" " + treeholeNewsMsg.confirmId)
       treeholeNewsRouter ! treeholeNewsMsg
       sender() ! new Result(treeholeNewsMsg.confirmId)
+
     }
     case treeholeMessageMsg:TreeholeMessageMsg =>{//推送下课聊主题
-      logBack.info("请求:"+treeholeMessageMsg.studentIds+":"+System.currentTimeMillis()+":"+3)
+//      logBack.info("请求:"+treeholeMessageMsg.studentIds+":"+System.currentTimeMillis()+":"+3)
+//      logBack.info("W统计 " + treeholeMessageMsg.confirmId)
       treeholeMessageRouter ! treeholeMessageMsg
     }
 
     case publicMessageMsg:PublicMessageMsg =>{//推送公众账号信息
-      logBack.info("请求:"+publicMessageMsg.studentIds+":"+System.currentTimeMillis()+":"+4)
+//      logBack.info("请求:"+publicMessageMsg.studentIds+":"+System.currentTimeMillis()+":"+4)
       publicMessageRouter ! publicMessageMsg
     }
 
@@ -94,7 +98,7 @@ class PushDispatcher extends Actor with ActorLogging{
     }
 
     case accountMessageV2:AccountMessageV2 =>{
-      logBack.info("请求:"+accountMessageV2.studentIds+":"+System.currentTimeMillis()+":"+7)
+//      logBack.info("请求:"+accountMessageV2.studentIds+":"+System.currentTimeMillis()+":"+7)
       sender() ! new Result(accountMessageV2.confirmId)
 
       val studentIds = new util.ArrayList[Int]()
@@ -106,13 +110,13 @@ class PushDispatcher extends Actor with ActorLogging{
       publicMessageRouter ! publicMessageMsg
     }
     case linkMessageMsg:LinkMessageMsg =>{
-      logBack.info("请求:"+linkMessageMsg.studentIds+":"+System.currentTimeMillis()+":"+8)
+//      logBack.info("请求:"+linkMessageMsg.studentIds+":"+System.currentTimeMillis()+":"+8)
       sender() ! new Result(linkMessageMsg.confirmId)
 
       linkRounter ! linkMessageMsg
     }
     case purviewMsg:PurviewMsg =>{
-      logBack.info("请求:"+purviewMsg.studentId+":"+System.currentTimeMillis()+":"+9)
+//      logBack.info("请求:"+purviewMsg.studentId+":"+System.currentTimeMillis()+":"+9)
       sender() ! new Result(purviewMsg.confirmId)
       purviewRounter ! purviewMsg
     }

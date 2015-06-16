@@ -48,9 +48,9 @@ object MethodHelper {
    * @param message
    */
   def putMessageToCache(key:String, message:AnyRef):Unit = {
-    if(getMessageToCache(key) == null){
-      MessageCache.put(key,message)
-    }
+//    if(getMessageToCache(key) == null){
+//      MessageCache.put(key,message)
+//    }
   }
 
   def getMessageToCache(key:String):AnyRef={

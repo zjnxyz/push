@@ -28,7 +28,7 @@ public class ApnsPushUtil {
 
 //    private static String certificatePath = "F:/超表推送证书导出(开发).p12";
 //    private static String certificatePath = "/mnt/super/config/超表推送证书导出(开发).p12";
-    private static String certificatePath = "/mnt/super/config/iosdev.p12";
+    private static String certificatePath = "/mnt/super/config/iospro.p12";
     private static String sound = "default";
     private static String certificatePassword = "123";// 此处注意导出的证书密码不能为空因为空密码会报错
 
@@ -56,12 +56,13 @@ public class ApnsPushUtil {
                 device = new BasicDevice();
                 device.setToken(deviceToken[i]);
                 try {
-                    PushedNotification notification =initPushManager().sendNotification(device,buildIosNoticationPayload(anpsMessage) , closeAfter);
-                    if(!notification.isSuccessful()){
-                        //如果失败后，重新连接
-                        restartConnection();
-                    }
-                    notifications.add(notification);
+//                    PushedNotification notification =initPushManager().sendNotification(device,buildIosNoticationPayload(anpsMessage) , closeAfter);
+//                    if(!notification.isSuccessful()){
+//                        //如果失败后，重新连接
+//                        restartConnection();
+//                    }
+//                    logBack.info(" wwapns|| "+anpsMessage.getAlert()+" "+deviceToken[i] );
+//                    notifications.add(notification);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

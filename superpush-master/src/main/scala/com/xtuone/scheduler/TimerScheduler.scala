@@ -2,7 +2,7 @@ package com.xtuone.scheduler
 
 import akka.actor.ActorRef
 import com.xtuone.model.Check
-import com.xtuone.util.AkkaOps
+import com.xtuone.util.{Const, AkkaOps}
 import org.slf4j.LoggerFactory
 import scala.concurrent.duration._
 

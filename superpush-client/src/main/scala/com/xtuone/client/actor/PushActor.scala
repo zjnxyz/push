@@ -24,24 +24,25 @@ class PushActor  extends Actor with ActorLogging{
 
   override def receive: Receive = {
     case chatMsg: ChatMsg =>{
-      println("chatMsg")
       sendMessageToWorker(chatMsg)
-      MethodHelper.putMessageToCache(chatMsg.confirmId, chatMsg )
+      println("W统计 "+chatMsg.chatIdStr+" "+chatMsg.confirmId+" "+chatMsg.pager.contentStr+" "+chatMsg.pager.sendTimeLong )
+//      MethodHelper.putMessageToCache(chatMsg.confirmId, chatMsg )
     }
 
     case treeholeNewsMsg: TreeholeNewsMsg =>{
       sendMessageToWorker(treeholeNewsMsg)
-      MethodHelper.putMessageToCache(treeholeNewsMsg.confirmId, treeholeNewsMsg )
+      println("W统计 "+ treeholeNewsMsg.studentId+" " + treeholeNewsMsg.confirmId)
+//      MethodHelper.putMessageToCache(treeholeNewsMsg.confirmId, treeholeNewsMsg )
     }
 
     case treeholeMessageMsg: TreeholeMessageMsg =>{
-      println("treeholeMessageMsg")
       sendMessageToWorker(treeholeMessageMsg)
-      MethodHelper.putMessageToCache(treeholeMessageMsg.confirmId, treeholeMessageMsg )
+      println("W统计 " + treeholeMessageMsg.confirmId)
+
+//      MethodHelper.putMessageToCache(treeholeMessageMsg.confirmId, treeholeMessageMsg )
     }
 
     case accountMessage: AccountMessage =>{
-      println("accountMessage")
       //公众账号
       sendMessageToWorker(accountMessage)
     }
@@ -50,27 +51,27 @@ class PushActor  extends Actor with ActorLogging{
       println("accountMessageV2")
       //公众账号(正在使用)
       sendMessageToWorker(accountMessageV2)
-      MethodHelper.putMessageToCache(accountMessageV2.confirmId, accountMessageV2 )
+//      MethodHelper.putMessageToCache(accountMessageV2.confirmId, accountMessageV2 )
     }
 
     case feedbackMessage:FeedbackMessage =>{
       println("feedbackMessage")
       //反馈
       sendMessageToWorker(feedbackMessage)
-      MethodHelper.putMessageToCache(feedbackMessage.confirmId, feedbackMessage )
+//      MethodHelper.putMessageToCache(feedbackMessage.confirmId, feedbackMessage )
     }
 
     case purviewMsg: PurviewMsg =>{
       println("purviewMsg")
       //权限
       sendMessageToWorker(purviewMsg)
-      MethodHelper.putMessageToCache(purviewMsg.confirmId, purviewMsg )
+//      MethodHelper.putMessageToCache(purviewMsg.confirmId, purviewMsg )
     }
 
     case otherMsg: OtherMsg =>{
       //其他
       sendMessageToWorker(otherMsg)
-      MethodHelper.putMessageToCache(otherMsg.confirmId, otherMsg )
+//      MethodHelper.putMessageToCache(otherMsg.confirmId, otherMsg )
     }
 
     case result: Result =>{
@@ -80,7 +81,7 @@ class PushActor  extends Actor with ActorLogging{
     }
 
     case anyRef:AnyRef =>{
-      println(" re send message")
+      println(" W统计 重试推送")
       sendMessageToWorker(anyRef)
     }
 

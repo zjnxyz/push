@@ -48,8 +48,8 @@ object AkkaOps {
     heartbeatScheduler.scheduler(worker)
 
     //启动重发不成功的消息的定时任务
-    val reSendMessageScheduler = new ReSendMessageScheduler
-    reSendMessageScheduler.scheduler()
+//    val reSendMessageScheduler = new ReSendMessageScheduler
+//    reSendMessageScheduler.scheduler()
 
     actorSystem
   }

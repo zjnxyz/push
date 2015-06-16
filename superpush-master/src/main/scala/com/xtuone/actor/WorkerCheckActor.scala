@@ -18,10 +18,12 @@ class WorkerCheckActor extends Actor with ActorLogging{
 
     case Check =>{
       val map = Const.workerMap
+      logBack.info("start WorkerMap:"+ Const.workerMap)
       map.foreach{
         case (key,client) =>{
           if(System.currentTimeMillis() - client.addTime > Const.timeout){
             //移除对应主题
+            logBack.info("del worker:"+client)
             Const.workerMap =  Const.workerMap.-(key)
           }
         }

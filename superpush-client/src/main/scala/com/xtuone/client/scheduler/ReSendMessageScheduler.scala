@@ -13,21 +13,21 @@ class ReSendMessageScheduler {
 
   def scheduler( pushRouter: ActorRef):Unit={
 
-    println("ReSendMessageScheduler")
-
-    val system = AkkaOps.getActorSystem()
-    import system.dispatcher
-    system.scheduler.schedule( Const.RE_SEND_MESSAGE_TIME milliseconds,Const.RE_SEND_MESSAGE_TIME millisecond){
-      val map = MethodHelper.MessageCache.asMap()
-      val iterator = map.keySet().iterator()
-      while(iterator.hasNext){
-        val key = iterator.next()
-        if(System.currentTimeMillis() - key.toLong >= Const.RE_SEND_MESSAGE_TIME){
-          if(MethodHelper.getMessageToCache(key) != null){
-            pushRouter ! MethodHelper.getMessageToCache(key)
-          }
-        }
-      }
-    }
+//    println("ReSendMessageScheduler")
+//
+//    val system = AkkaOps.getActorSystem()
+//    import system.dispatcher
+//    system.scheduler.schedule( Const.RE_SEND_MESSAGE_TIME milliseconds,Const.RE_SEND_MESSAGE_TIME millisecond){
+//      val map = MethodHelper.MessageCache.asMap()
+//      val iterator = map.keySet().iterator()
+//      while(iterator.hasNext){
+//        val key = iterator.next()
+//        if(System.currentTimeMillis() - key.toLong >= Const.RE_SEND_MESSAGE_TIME){
+//          if(MethodHelper.getMessageToCache(key) != null){
+//            pushRouter ! MethodHelper.getMessageToCache(key)
+//          }
+//        }
+//      }
+//    }
   }
 }
