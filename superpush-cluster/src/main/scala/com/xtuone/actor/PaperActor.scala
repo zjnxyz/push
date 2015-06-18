@@ -73,23 +73,25 @@ class ApnsPaperActor extends Actor with ActorLogging{
   override def receive: Actor.Receive = {
     case chatMsg:ChatMsg =>{
 
-      val deviceToken = MethodHelper.findUserDeviceToken(chatMsg.chatIdStr)
+      if(Constant.apns_push_student.contains(chatMsg.chatIdStr.toInt)){
+        val deviceToken = MethodHelper.findUserDeviceToken(chatMsg.chatIdStr)
 
-      if(MethodHelper.isNotEmpty(deviceToken)){
-        logBack.info("deviceToken:"+deviceToken+"   chatId:"+ chatMsg.chatIdStr )
-        val apnsMessage = new AnpsMessage
-        //增加badge数量
-        val badge = RedisUtil213.init().incr(Constant.KEY_APNS_NO_READ_NUM+chatMsg.chatIdStr)
-        apnsMessage.setBadge(badge.toInt)
-        apnsMessage.setAlert(chatMsg.pager.nicknameStr+":"+chatMsg.pager.contentStr)
-        val extras = new util.HashMap[String,String]()
-        //发送人的聊天id
-        extras.put("ci",chatMsg.pager.chatIdStr)
-        extras.put("mt",MessageType.CHAT+"")
-        apnsMessage.setExtras(extras)
-        //推送到apns
-        val result =  ApnsPushUtil.push(apnsMessage,deviceToken)
-        logBack.info("apns-->result:"+result+": chatId :"+chatMsg.chatIdStr )
+        if(MethodHelper.isNotEmpty(deviceToken)){
+          logBack.info("deviceToken:"+deviceToken+"   chatId:"+ chatMsg.chatIdStr )
+          val apnsMessage = new AnpsMessage
+          //增加badge数量
+          val badge = RedisUtil213.init().incr(Constant.KEY_APNS_NO_READ_NUM+chatMsg.chatIdStr)
+          apnsMessage.setBadge(badge.toInt)
+          apnsMessage.setAlert(chatMsg.pager.nicknameStr+":"+chatMsg.pager.contentStr)
+          val extras = new util.HashMap[String,String]()
+          //发送人的聊天id
+          extras.put("ci",chatMsg.pager.chatIdStr)
+          extras.put("mt",MessageType.CHAT+"")
+          apnsMessage.setExtras(extras)
+          //推送到apns
+          val result =  ApnsPushUtil.push(apnsMessage,deviceToken)
+          logBack.info("apns-->result:"+result+": chatId :"+chatMsg.chatIdStr )
+        }
       }
 
     }

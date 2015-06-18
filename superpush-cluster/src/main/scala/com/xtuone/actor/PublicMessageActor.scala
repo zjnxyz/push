@@ -324,31 +324,35 @@ class ApnsPublicMessageActor extends Actor with ActorLogging{
 
       //推送到 apns
       for( studentId <- publicMessageMsg.studentIds) {
+
+        //暂时推送一批指定用户
         val deviceToken = MethodHelper.findUserDeviceToken(studentId + "")
 
         if (MethodHelper.isNotEmpty(deviceToken)) {
 
-          val apnsMessage = new AnpsMessage
-          //设置弹出内容
-          apnsMessage.setAlert(publicMessageMsg.alert)
-          //增加badge数量
-          val badge = RedisUtil213.init().incr(Constant.KEY_APNS_NO_READ_NUM+studentId)
-          apnsMessage.setBadge(badge.toInt)
+          if(Constant.apns_push_student.contains(studentId)){
+            val apnsMessage = new AnpsMessage
+            //设置弹出内容
+            apnsMessage.setAlert(publicMessageMsg.alert)
+            //增加badge数量
+            val badge = RedisUtil213.init().incr(Constant.KEY_APNS_NO_READ_NUM+studentId)
+            apnsMessage.setBadge(badge.toInt)
 
-          val extras = new util.HashMap[String,String]()
-          extras.put("mt",MessageType.PUBLIC_ACCOUNTS+"")
-          apnsMessage.setExtras(extras)
-          val result = ApnsPushUtil.push(apnsMessage,deviceToken)
+            val extras = new util.HashMap[String,String]()
+            extras.put("mt",MessageType.PUBLIC_ACCOUNTS+"")
+            apnsMessage.setExtras(extras)
+            val result = ApnsPushUtil.push(apnsMessage,deviceToken)
 
-          for( pn <- result.getFailedNotifications ){
-            MethodHelper.removeFailerDeviceToken(String.valueOf(studentId))
+            for( pn <- result.getFailedNotifications ){
+              MethodHelper.removeFailerDeviceToken(String.valueOf(studentId))
+            }
+            logBack.info("apns-->result:"+result+": chatId :"+ studentId +" deviceToken:"+deviceToken)
           }
-
-          logBack.info("apns-->result:"+result+": chatId :"+ studentId +" deviceToken:"+deviceToken)
 
         }else{
           jpushStudentIds.add(studentId)
         }
+
       }
 
       if(jpushStudentIds.size() > 0){

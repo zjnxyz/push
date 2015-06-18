@@ -94,20 +94,24 @@ class ApnsTreeholeNewsActor extends Actor with ActorLogging{
   override def receive: Actor.Receive = {
 
     case treeholeNewsMsg:TreeholeNewsMsg =>{
+
       val deviceToken = MethodHelper.findUserDeviceToken(treeholeNewsMsg.studentId+"")
       if(MethodHelper.isNotEmpty(deviceToken)){
-        logBack.info("studentId:"+treeholeNewsMsg.studentId+"--deviceToken:"+deviceToken)
-        val apnsMessage = new AnpsMessage
-        //增加badge数量
-        val badge = RedisUtil213.init().incr(Constant.KEY_APNS_NO_READ_NUM+treeholeNewsMsg.studentId)
-        apnsMessage.setBadge(badge.toInt)
-        //设置弹出内容
-        apnsMessage.setAlert(treeholeNewsMsg.unReadNews.t)
-        val extras = new util.HashMap[String,String]()
-        extras.put("mt",MessageType.TREEHOLE_REPLY+"")
-        apnsMessage.setExtras(extras)
-        val result = ApnsPushUtil.push(apnsMessage,deviceToken)
-        logBack.info("apnspush-->result:"+result+": chatId :"+ treeholeNewsMsg.studentId  )
+        if(Constant.apns_push_student.contains(treeholeNewsMsg.studentId)){
+          logBack.info("studentId:"+treeholeNewsMsg.studentId+"--deviceToken:"+deviceToken)
+          val apnsMessage = new AnpsMessage
+          //增加badge数量
+          val badge = RedisUtil213.init().incr(Constant.KEY_APNS_NO_READ_NUM+treeholeNewsMsg.studentId)
+          apnsMessage.setBadge(badge.toInt)
+          //设置弹出内容
+          apnsMessage.setAlert(treeholeNewsMsg.unReadNews.t)
+          val extras = new util.HashMap[String,String]()
+          extras.put("mt",MessageType.TREEHOLE_REPLY+"")
+          apnsMessage.setExtras(extras)
+          val result = ApnsPushUtil.push(apnsMessage,deviceToken)
+          logBack.info("apnspush-->result:"+result+": chatId :"+ treeholeNewsMsg.studentId  )
+        }
+
       }else{
         //推送jpush
         jpushActor ! treeholeNewsMsg

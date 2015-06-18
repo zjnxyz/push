@@ -1,7 +1,6 @@
 package com.xtuone.util
 
 import java.sql.{Connection, ResultSet, PreparedStatement}
-import java.util
 import java.util.concurrent.TimeUnit
 
 import com.google.common.cache.CacheBuilder
@@ -43,6 +42,8 @@ object Constant {
    * 分割标识符
    */
   val SPLIT_FLAG = "#>zjn<#"
+
+  val apns_push_student =  List[Int](1,2)
 
 
 }

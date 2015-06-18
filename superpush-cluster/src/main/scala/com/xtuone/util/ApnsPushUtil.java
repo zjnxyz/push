@@ -56,13 +56,13 @@ public class ApnsPushUtil {
                 device = new BasicDevice();
                 device.setToken(deviceToken[i]);
                 try {
-//                    PushedNotification notification =initPushManager().sendNotification(device,buildIosNoticationPayload(anpsMessage) , closeAfter);
-//                    if(!notification.isSuccessful()){
-//                        //如果失败后，重新连接
-//                        restartConnection();
-//                    }
-//                    logBack.info(" wwapns|| "+anpsMessage.getAlert()+" "+deviceToken[i] );
-//                    notifications.add(notification);
+                    PushedNotification notification =initPushManager().sendNotification(device,buildIosNoticationPayload(anpsMessage) , closeAfter);
+                    if(!notification.isSuccessful()){
+                        //如果失败后，重新连接
+                        restartConnection();
+                    }
+                    logBack.info(" wwapns "+anpsMessage.getAlert()+" "+deviceToken[i] );
+                    notifications.add(notification);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -150,7 +150,7 @@ public class ApnsPushUtil {
                 e.printStackTrace();
             }
         }
-
+        pushManager.setRetryAttempts(0);
         return pushManager;
     }
 
@@ -174,10 +174,9 @@ public class ApnsPushUtil {
                 }catch (Exception ex) {
                     ex.printStackTrace();
                 }
-
             }
-
         }
+        pushManager.setRetryAttempts(0);
     }
 
 }
