@@ -90,20 +90,22 @@ class ApnsTreeholeMessageActor extends Actor with ActorLogging{
     case treeholeMessageMsg:TreeholeMessageMsg =>{
       val jpushStudentIds = new util.ArrayList[String]()
       for( studentId <- treeholeMessageMsg.studentIds){
+
         val deviceToken = MethodHelper.findUserDeviceToken(studentId+"")
         if(MethodHelper.isNotEmpty(deviceToken)){
-          val apnsMessage = new AnpsMessage
-          //增加badge数量
-          val badge = RedisUtil213.init().incr(Constant.KEY_APNS_NO_READ_NUM+studentId)
-          apnsMessage.setBadge(badge.toInt)
-          //设置弹出内容
-          apnsMessage.setAlert(treeholeMessageMsg.treeholeMessageNews.c)
-          val extras = new util.HashMap[String,String]()
-          extras.put("mt",MessageType.TREEHOLE_MESSAGE+"")
-          extras.put("id",treeholeMessageMsg.treeholeMessageNews.mi+"")
-          apnsMessage.setExtras(extras)
-          val result = ApnsPushUtil.push(apnsMessage,deviceToken)
-          logBack.info("apns-->result:"+result+": chatId :"+ studentId +" :message: "+ g.toJson(apnsMessage) )
+
+            val apnsMessage = new AnpsMessage
+            //增加badge数量
+            val badge = RedisUtil213.init().incr(Constant.KEY_APNS_NO_READ_NUM+studentId)
+            apnsMessage.setBadge(badge.toInt)
+            //设置弹出内容
+            apnsMessage.setAlert(treeholeMessageMsg.treeholeMessageNews.c)
+            val extras = new util.HashMap[String,String]()
+            extras.put("mt",MessageType.TREEHOLE_MESSAGE+"")
+            extras.put("id",treeholeMessageMsg.treeholeMessageNews.mi+"")
+            apnsMessage.setExtras(extras)
+            val result = ApnsPushUtil.push(apnsMessage,deviceToken)
+            logBack.info("apns-->result:"+result+": chatId :"+ studentId +" :message: "+ g.toJson(apnsMessage) )
 
         }else{
           //推送极光

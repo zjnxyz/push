@@ -72,8 +72,6 @@ class ApnsPaperActor extends Actor with ActorLogging{
 
   override def receive: Actor.Receive = {
     case chatMsg:ChatMsg =>{
-
-      if(Constant.apns_push_student.contains(chatMsg.chatIdStr.toInt)){
         val deviceToken = MethodHelper.findUserDeviceToken(chatMsg.chatIdStr)
 
         if(MethodHelper.isNotEmpty(deviceToken)){
@@ -92,7 +90,6 @@ class ApnsPaperActor extends Actor with ActorLogging{
           val result =  ApnsPushUtil.push(apnsMessage,deviceToken)
           logBack.info("apns-->result:"+result+": chatId :"+chatMsg.chatIdStr )
         }
-      }
 
     }
   }

@@ -329,8 +329,6 @@ class ApnsPublicMessageActor extends Actor with ActorLogging{
         val deviceToken = MethodHelper.findUserDeviceToken(studentId + "")
 
         if (MethodHelper.isNotEmpty(deviceToken)) {
-
-          if(Constant.apns_push_student.contains(studentId)){
             val apnsMessage = new AnpsMessage
             //设置弹出内容
             apnsMessage.setAlert(publicMessageMsg.alert)
@@ -347,7 +345,6 @@ class ApnsPublicMessageActor extends Actor with ActorLogging{
               MethodHelper.removeFailerDeviceToken(String.valueOf(studentId))
             }
             logBack.info("apns-->result:"+result+": chatId :"+ studentId +" deviceToken:"+deviceToken)
-          }
 
         }else{
           jpushStudentIds.add(studentId)

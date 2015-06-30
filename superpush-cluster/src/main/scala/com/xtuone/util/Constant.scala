@@ -7,6 +7,7 @@ import com.google.common.cache.CacheBuilder
 import com.xtuone.util.jdbc.JdbcUtil
 import com.xtuone.util.redis.RedisUtil213
 import org.slf4j.LoggerFactory
+import java.util
 
 /**
  * Created by Zz on 2015/1/13.
@@ -43,7 +44,7 @@ object Constant {
    */
   val SPLIT_FLAG = "#>zjn<#"
 
-  val apns_push_student =  List[Int](1,2)
+  val apns_push_student =  List[Int](3131938,1646,1123462,602,12992269,12992287,14545433,1239347,1165549,14112191,1165549,1239347)
 
 
 }
